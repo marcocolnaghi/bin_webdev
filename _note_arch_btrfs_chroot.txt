@@ -1,0 +1,26 @@
+sudo -i
+
+cd /mnt
+mkdir arch
+
+mount /dev/sda7 arch
+cd arch
+
+cd @
+mount --bind ../@home home
+mount --bind ../@cache var/cache
+mount --bind ../@log var/log
+
+mount --rbind /dev dev/
+mount --rbind /sys sys/
+mount -t proc /proc proc/
+
+cp /etc/resolv.conf etc/resolv.conf
+vim etc/pacman.conf 'disable CheckSpace
+
+chroot .
+
+mount --bind . /
+
+pacman -Sy
+

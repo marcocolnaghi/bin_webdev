@@ -1,0 +1,5 @@
+grub-mkdevicemap 
+grub-mkconfig 
+grub-install /dev/sda
+update-grub
+

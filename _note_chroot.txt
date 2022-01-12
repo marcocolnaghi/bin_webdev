@@ -1,0 +1,11 @@
+#!/bin/bash
+
+ 
+echo "mount /dev/sdXY /mnt [where sdXY has previously been identified using gparted] "
+echo "cd /mnt"
+echo "for i in /dev /dev/pts /proc /sys /run; do sudo mount -B $i $i; done"
+echo "chroot ."
+
+echo -e "do actions\ni.e\ngrub-mkconfig\ngrub-install"
+
+echo

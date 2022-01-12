@@ -1,0 +1,6 @@
+#!/bin/bash 
+PATH="$PATH:/data/bin"
+export PATH
+cd /opt/dassault-systemes/DraftSight/Linux/
+faketime 01/06/2019 DraftSight
+

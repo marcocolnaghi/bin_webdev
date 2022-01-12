@@ -1,0 +1,110 @@
+#!/bin/bash
+function syntax()
+{
+	echo $(basename $0) \<file=pdffile\> \<name=name_\>[start=n] [end=n] [mod=n]
+	exit 1
+}
+
+count=1
+while [ ! -z $1 ]
+do
+	case $1 in
+	"-f")
+		shift 
+		file=$1
+		;;	 
+	
+	"-n")
+		shift 
+		name=$1
+		;;	 
+	
+	"-s")
+		shift 
+		sp=$1
+		;;	 
+	
+	"-m")
+		shift 
+		mod=$1
+		;;	 
+	
+	"-e")
+		shift 
+		ep=$1
+		;;	 
+	
+	"-c")
+		shift 
+		count=$1
+		;;	 
+	
+	esac
+	
+	shift
+done
+
+[[ -z $file ]] && syntax 
+[[ -z $name ]] && syntax 
+[[ -z $mod ]] && mod=2
+[[ -z $sp ]] && sp=1
+
+#for f in ../*.pdf;
+#do
+if $(false)
+then
+	f="$1"
+	if [[ "$1" = "" ]]
+	then
+		echo Syntax:
+		echo 'dfsplit <pdffile> [startpage]'
+		exit 1
+	fi 
+
+
+	if [[ ! "$2" = "" ]]
+	then
+		sp=$2
+	else
+		sp=1 # pdftk start page for cat operation
+	fi
+fi
+echo "file: $file"
+echo "name: $name"
+echo "start: $sp"
+echo "end: $ep"
+echo "mod: $mod"
+echo "count: $count"
+
+echo any key to continue
+read a
+
+dir=$(echo $(basename $f)|sed -e 's/.pdf//')
+rc=0 # pdftk command result
+pf=1 # progressive file number
+
+#	echo $dir $sp $pf
+#	exit 1
+#mkdir $dir
+#cd $dir
+rc=0
+while [ $rc = 0 ]
+do
+	prog="$(echo 00$count|rev|cut -b -2|rev)"
+	ofn="$name""$prog".pdf
+	echo pdftk $file cat $sp-$(($sp+$mod-1)) output $ofn
+	pdftk $file cat $sp-$(($sp+$mod-1)) output $ofn
+
+	rc=$?
+	
+	#read a
+	sp=$(($sp+$mod))
+	pf=$(($pf+$mod-1))
+	count=$(($count+1))
+	#read pause
+	#echo $sp
+	#rc=1
+done
+#done
+
+

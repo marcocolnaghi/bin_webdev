@@ -1,0 +1,26 @@
+#!/bin/bash
+unalias -a
+[[ ! "$1" = "." ]] && echo -e "\nSyntax:\n\t$(basename $0) .\t\t(dry run in this dir)\n\t$(basename $0) . -execute\t(execute run in this dir)\n\n" && exit 1
+for i in 9 8 7 6 5 4 3 2 1
+do
+	for f in $(ls *-$i.jpg 2>/dev/null)
+	do
+		#IF EXIST -n MOVE TO KEEP 
+		echo mv $f $(echo $f|sed -e 's/-'$i'\././')
+		echo mv $f.out.pp3 $(echo $f|sed -e 's/-'$i'\././').out.pp3
+
+		#REMOVE ALL -
+		echo rm $(echo $f|sed -e 's/-'$i'.*/-/')*		
+		echo
+
+		if [ "$2" = "-execute" ] 
+		then
+			mv $f $(echo $f|sed -e 's/-'$i'\././')
+			mv $f.out.pp3 $(echo $f|sed -e 's/-'$i'\././').out.pp3
+			rm $(echo $f|sed -e 's/-'$i'.*/-/')*		
+		fi
+
+	done 
+
+done
+

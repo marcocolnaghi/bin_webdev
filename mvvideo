@@ -1,0 +1,25 @@
+#!/bin/bash
+
+srcdir=${1:?"Error: parameter \$1 missing"}
+
+basedir=$(dirname $1)
+[[ ! "$basedir" == "." ]] && [[ ! -d $basedir ]] && echo "Error: dir $basedir does not exist." && exit 1
+cd $basedir
+
+srcdir="$(basename $1)"
+[[ ! -d $srcdir ]] && echo "Error: dir $srcdir does not exist." && exit 1
+
+echo Files to move:
+
+find $srcdir |grep -ie "\.avi"
+
+echo "^C to stop"
+read a 
+
+for f in $(find $srcdir |grep -ie "\.avi") 
+do
+	destd="video/$(dirname $f|cut -b $(($(echo $srcdir|wc -c )+1))- )"
+	destf=$(basename $f)
+	echo mkdir -p $destd
+	echo mv $f $destd/$destf
+done

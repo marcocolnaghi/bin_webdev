@@ -1,0 +1,64 @@
+#!/bin/bash
+
+printHelp() {
+	echo $(basename $0) '<backupset> [backupset2] .. [backupset-n]'
+	echo Example: $(basename $0) 31 
+	echo Example: $(basename $0) 22 31 
+	exit 1
+}
+
+unalias -a
+ver="0.2"
+echo -e "\n$(basename $0) $ver $(stat -c %y $0|cut -d ' ' -f 1) \n"
+[[ "$1" = "" ]] && printHelp
+
+bidir="/data/bin/bnginfo"
+
+#lastb="$(ls -t $bidir/backup"$1"_  $bidir/bng"$1"_|grep _du.txt|head -n 1)"
+
+exec 2>/dev/null
+
+if [ "$(basename $0)" = "rawsinbackup" ]
+then
+	## rawsinbackup SEARCH FOR DIR CONTAINING RAWSA
+	dirs="$(for f in $(find . '(-iname "*.CR2" -o -iname "*.RAF" -o -iname "*.ARW")' -printf "%P\n" ); do dirname $f; done|sort|uniq|sort)"
+else 
+	## dirsinbackup  
+	dirs="$(find . -maxdepth 1 -type d -printf "%P\n"|sort)"
+fi
+
+#for d in $dirs; do echo $d;done
+
+#for d in $(for f in $(find . -iname "*.CR2" -o -iname "*.RAF" -o -iname "*.ARW" -printf "%P\n" ); do dirname $f; done|sort|uniq|sort);
+for d in $dirs
+do 
+	## RAW DIR FULL PATH WITHOUT INITIAL /
+	rd="$(pwd |cut -b 2-)/$d"
+	echo -e '\e[1;32m'$(du -hc $d|tail -n 1|cut -f 1) $rd'\e[0m'; 
+
+
+	## SEARCH EVERY BACKUP SET FOR THE LAST BACKUP
+	for bs in $*
+	do
+		lastb="$(ls -t $bidir/backup"$bs"_*  $bidir/bng"$bs"_*|grep _du.txt|head -n 1)"
+	##      lastb="$(ls -t $bidir |grep backup"$bs"_ |grep _du.txt|head -n 1)"
+		#echo -e '\t'$lastb'\t'$lastbs 
+		# echo -e '\e[1;32m'$(du -hc $d|tail -n 1|cut -f 1) $d'\e[0m'; 
+		if [ ! "$lastb" = "" ]
+		then
+			#echo grep $rd $lastb
+			## FIND SIZE IN LAST BACKUP OF SET XX
+			lbres="$(grep $rd\$ $lastb|cut -f 1)"
+		
+			## IF NOT FOUND PREPARE TO SAY IT   
+			[[ "$lbres" = "" ]] && lbres='\e[1;31m'"\t*NOT FOUND*"'\e[0m'
+			echo -e "$lbres"" in $(basename $lastb)" 
+		else
+			## FOUND NEITHER LAST BACKUP OF SET XX
+			echo -e '\e[1;31m'"\t*MISSING BACKUP*"'\e[0m' $bs
+		fi
+	done
+	echo '---------------------------------------'
+done 
+
+

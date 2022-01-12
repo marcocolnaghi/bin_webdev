@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#for f in ../*.pdf;
+#do
+	f="$1"
+	echo pdfburst $f
+
+	rc=0 # pdftk command result
+	sp=$2
+	[[ "sp" == "" ]] && sp=1 # pdftk start page for cat operation
+	pf=1 # progressive file number
+	while [ $rc = 0 ]
+	do
+		prog="$(echo 00$pf|rev|cut -b -2|rev)"
+		ofn="$(basename $f|sed -e 's/.pdf//')_$prog"
+		pdftk $f cat $sp-$(($sp+1)) output $ofn.pdf
+		rc=$?
+	
+		sp=$(($sp+2))
+		pf=$(($pf+1))
+		#read pause
+		#echo $sp
+		#rc=1
+	done
+#done
+
+

@@ -1,0 +1,8 @@
+#!/bin/bash
+PATH="$PATH:/data/bin"
+export PATH
+
+rtbin='/usr/bin/rawtherapee'
+
+screenreg
+$rtbin $*

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+[[ -d $1 ]] && cd $1
+
+du -ch $(dirname $(find -H . -iname '*.cr2' -o -iname '*.crw' -o -iname '*.arw' -o -iname '*.raf')|sort|uniq|grep -v '^.$')|grep -v ^0
+
+#for d in $(for f in $(find . -iname "*.CR2" -o -iname "*.RAF" -o -iname "*.ARW"); do dirname $f; done|sort|uniq|sort); do echo $(du -hc $d|tail -n 1|cut -f 1) $d; done 

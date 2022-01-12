@@ -1,0 +1,7 @@
+#!/bin/bash
+
+[[ "$1" == "" ]] && echo -e "Error file not pecified\n\n\tsyntax: videodate <file>\n\n" && exit 1
+
+d=$(cat $1|head -n 1 |tr -c -d '[A-Z,a-z,0-9,:, ]'|sed -e 's/.*IDIT//'|sed -e 's/ /, /')
+echo $d
+date -d "$d" +%y%m%d

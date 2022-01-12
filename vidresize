@@ -1,0 +1,5 @@
+#!/bin/bash
+
+mkdir video_rid
+mencoder $1 -ovc lavc -lavcopts vcodec=mpeg4:mbd=2:trell  -oac copy -vf scale=360:240 -o video_rid/"vr_"$1
+

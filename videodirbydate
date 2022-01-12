@@ -1,0 +1,21 @@
+#!/bin/bash
+
+for img in $(ls *.avi *.AVI)
+do
+	echo $img
+	imdate=$(exiftool "$img" |grep -i "Date/Time Original")
+	dirdate=$(echo $imdate|cut -d : -f "2 3 4"|cut -b "4-5 7-8 10-11")
+	echo $imdate
+	echo $dirdate
+	if ! [ -e $dirdate ]
+	then
+		mkdir $dirdate
+	else
+		if ! [ -d $dirdate ]
+		then
+			echo "Error $dirdate is not a dir, can't use it to store images"
+			exit 1
+		fi 
+	fi
+	mv "$img" $dirdate
+done

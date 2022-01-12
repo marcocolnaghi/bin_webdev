@@ -1,0 +1,28 @@
+#!/bin/bash
+ver="0.1"
+unalias -a 
+echo -e "\n$(basename $0) $ver $(stat -c %y $0|cut -d ' ' -f 1) \n"
+
+[[ "$1" = "" ]] && echo Error: missing bng set && \
+	echo -e $0 '<bngset>' && echo Es: $0 32 \n\n && exit 1
+
+
+
+unalias -a 
+
+l2=$(ls /data/bin/bnginfo/bng"$1"*_du*|tail -n 2)
+
+[[ ! "$(echo $l2 |wc -w )" = "2" ]] && echo $l2 && echo Error: missing bng $1 set info && exit 1
+
+f1=$(echo $l2 |cut -f 1 -d ' ')
+f2=$(echo $l2 |cut -f 2 -d ' ')
+
+of1="/tmp/$(basename $f1)"
+of2="/tmp/$(basename $f2)"
+
+cat $f1 |grep -v 'home_'|grep -v 'home.*/\.' >$of1
+cat $f2 |grep -v 'home_'|grep -v 'home.*/\.' >$of2
+
+gvimdiff $of1 $of2 
+
+#rm $of1 $of2

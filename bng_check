@@ -1,0 +1,94 @@
+#!/bin/bash
+ver="0.1"
+
+unalias -a
+
+#create screen bufffer for continuous progress refresh
+echo -e "$(basename $0) $ver $(stat -c %y $0|cut -d ' ' -f 1) \n"
+
+if="$(dirname $0)/bnginfo/$1"
+
+[[ "$if" = "" ]] \
+	&& echo 'Error: missing bng-log-file' \
+	&& echo -e "Syntax: $(basename $0) <bng-log-file> [+|++]\n" \
+	&& exit 1 
+
+[[ ! -e "$if" ]] \
+	&& echo -e "Error: missing $1 bng-log-file\n" \
+	&& exit 1 
+	
+ofd=/tmp/"$(basename $0)"_del.txt
+ofa=/tmp/"$(basename $0)"_add.txt
+echo "" > "$ofd"
+echo "" > "$ofa"
+
+echo -e "... preparing deleting list ..."
+echo "*** DELETING *** " >$ofd
+echo -e "[$if]\n" >>$ofd
+
+
+#COUNT DELETING
+grep "cannot delete non-empty directory" $if |sort|uniq >>$ofd
+echo >>$ofd
+
+# search ^deleting lines 
+# not hidden (/.)
+# containing / (files or dirs)
+# ignore preceding deleting
+# sort + uniq
+dellines=$(cat $if |grep "^deleting" |grep -v '\/\.'|cut -d ' ' -f 2|sort|uniq)
+#echo $dellines >dellines.txt
+
+deldirs=$(echo $dellines |tr ' ' '\n'|grep '/$')
+#echo $deldirs >deldirs.txt
+
+exec 2>/dev/null
+
+tot=$(echo $deldirs|wc -w)
+c=1
+for s in $deldirs
+do
+	#clear
+	#echo -e $screenb
+	echo -en "\r$c/$tot"
+	lc=$(echo $dellines|tr ' ' '\n'|grep $s|wc -l)
+	[[ ! "1" = "$lc" ]] && echo -e "$lc\t"$s >>$ofd
+	c=$(($c+1))
+done
+
+c=$(($c-1))
+
+echo -e "\n\n... preparing adding list ..."
+echo "*** ADDING *** " >$ofa 
+echo -e "[$if]\n" >>$ofa
+
+# search NOT ^deleting lines 
+# not hidden (/.)
+# containing / (files or dirs)
+# not from rsync output
+# sort + uniq
+addlines=$(cat $if |grep -v "^deleting" |grep -v '\/\.'|grep '/'|grep -v '^.*rsync -'|grep -v ' -> '|grep -v 'sent.*received'|grep -v 'total size.*speedup'| sort|uniq)
+#echo $addlines >addlines.txt
+
+adddirs=$(echo $addlines |tr ' ' '\n'|grep '/$'|sort|uniq)
+#echo $adddirs >adddirs.txt
+
+tot=$(echo $adddirs|wc -w)
+c=1
+for s in $adddirs
+do
+	#clear
+	#echo -e $screenb
+	echo -en "\r$c/$tot"
+
+	ltc=$(echo $addlines|tr ' ' '\n'|grep $s)
+	lc=$(echo $ltc|tr ' ' '\n'|wc -l)
+	[[ ! "1" = "$lc" ]] && echo -e "$lc\t"$s >>$ofa
+	c=$(($c+1))
+done
+echo -e '\n'
+
+gvim -O $ofd $ofa &>/dev/null
+
+
+

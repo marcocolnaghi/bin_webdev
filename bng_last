@@ -1,0 +1,11 @@
+#!/bin/bash
+
+infodir=/data/bin/bnginfo
+
+last="$(for f in $(/bin/ls $infodir|grep log); do echo ${f:6:6} $f; done|sort -r |head -n 10|cut -b 8-)"
+
+for f in $(echo $last)
+do
+	echo -e "$f\t bng_check $f\tbng_diff ${f:3:2}\tvi $infodir/${f/.log/_du.txt}"
+done
+

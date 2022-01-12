@@ -1,0 +1,137 @@
+#!/bin/bash
+ver="0.1"
+unalias -a 
+echo -e "\n$(basename $0) $ver $(stat -c %y $0|cut -d ' ' -f 1) \n"
+
+# default to dryrun
+optdryrun=" -n "
+
+#check parameters
+syntax="Synatx: $0 <n> [-execute]|[--help]" 
+
+[[ "$2" = "-execute" ]] && optdryrun=" "
+[[ "$1" = "" ]] && echo $syntax && exit 1
+[[ "$1" = "--help" ]] && echo $syntax && exit 1
+[[ ! "$2" = "-execute" ]] && [[ ! "$2" = "" ]] && echo $syntax && exit 1
+
+#echo "$optdryrun"
+
+#backupinfodir="$(dirname $0)/backupinfo"
+backupinfodir="$(dirname $0)/$(basename $0)info"
+mkdir $backupinfodir >/dev/null 2>&1 
+[[ ! -d $backupinfodir ]] && echo Error: missing and cannot create $backupinfodir && exit 1
+
+backupname="$(basename $0)$1"
+
+dest="/mnt/$backupname"
+destpath="/"
+
+
+## preparing checkmount list based on bind filesystem list ###
+## all folders in this dirs must have a mount in data:
+##      if data2 is in bng.bindfs and has 2 subdirs: temp , photo_test
+## 	data2/temp -> data/temp 
+## 	data2/photo_test -> data/photo/test 
+rm $0.checkmount
+for b in $(cat $0.bindfs)
+do 
+	find /$b -maxdepth 1 -type d|grep -v "^/$b$" |sed -e "s/$b/data/"|grep -v 'lost+found' |sed -e 's/_/\//'|sort >>$0.checkmount
+done
+
+for d in $(cat $0.checkmount)
+do
+	[[ ! $(findmnt -M $d) ]] && echo "Error: dir $d in one of $0.bindfs not mounted" && exit 1
+done
+
+[[ ! $(findmnt -M $dest) ]] && echo "Destination ($dest) not mounted" && exit 1
+
+#addonly="$backupname"".addonly.incl"
+#include=="$backupname"".incl"
+#exclude=="$backupname"".excl"
+addonly="$0"".addonly"
+sync="$0"".sync"
+exclude="$0"".exclude"
+
+missing=""
+for f in $(cat $sync)
+do
+	[[ ! -e "/"$f ]] && echo -e "Error: source file/dir is missing: $f\n" && exit 1
+    	# chceck it is not an empty dir 
+	[[ -d "/"$f ]] && [[ "$(ls -1A "/"$f|wc -l)" = "0" ]] && echo -e "Error: $f is an empty dir, NOT admittend in sync dirs\n" && exit 1
+done
+
+
+logfile="$backupinfodir"/"$backupname"_"$(date +%y%m%d).log"
+lsfile="$backupinfodir"/"$backupname"_"$(date +%y%m%d)_ls.txt"
+dufile="$backupinfodir"/"$backupname"_"$(date +%y%m%d)_du.txt"
+sep='\n=====================================================================\n'
+
+echo Starting $backupname |tee $logfile
+#exit
+
+echo -e "Logging to $logfile\n"
+
+echo $sync 
+echo $addonly 
+echo $exclude
+
+#[ -f $sync ] && optinclude="--files-from=$sync"
+#[ -f $exclude ] && optexclude="--exclude-from=$exclude"
+
+
+echo continuing |tee -a $logfile
+
+if [[ "$optdryrun" == " " ]]
+then
+	echo "" > $lsfile	
+	echo "" > $dufile	
+fi
+
+echo -e "\n\nSaving addonly set with the following rsync command" |tee -a $logfile
+echo rsync -arv $optdryrun --files-from=$addonly --exclude-from=$exclude --exclude-from=$sync / $dest$destpath |tee -a $logfile
+rsync -arv $optdryrun --files-from=$addonly --exclude-from=$exclude --exclude-from=$sync / $dest$destpath |tee -a $logfile
+     #rsync -arvR $optdryrun $s $optexclude $dest$destpath |tee -a $logfile
+
+#if [[ "$optdryrun" == " " ]]
+#then
+#	echo -e $sep >> $lsfile	
+#	ls -lhRa $dest >> $lsfile	
+#	
+#	echo -e $sep >> $dufile	
+#	du -h    $dest >> $dufile	
+#	echo -e $sep >> $dufile	
+#	df -h $dest >> $dufile	
+#fi
+
+echo -e "\n\nSyncing sync set with the following rsync command" |tee -a $logfile
+echo rsync -arv $optdryrun --delete --files-from=$sync --exclude-from=$exclude --exclude-from=$addonly / $dest$destpath |tee -a $logfile
+rsync -arv $optdryrun --delete --files-from=$sync --exclude-from=$exclude --exclude-from=$addonly / $dest$destpath |tee -a $logfile
+     #rsync -arvR $optdryrun --delete $s $optexclude $dest$destpath |tee -a $logfile
+
+if [[ "$optdryrun" == " " ]]
+then
+	echo -e $sep >> $lsfile	
+	ls -lhRa $dest >> $lsfile	
+	echo -e $sep >> $dufile	
+	du -h $dest |grep -v 'K.*\t*\/' |sed -e 's/\/mnt\///' -e "s/$(basename $0)$1//" |sort -k 2 >> $dufile	
+	echo -e $sep >> $dufile	
+	df -h $dest >> $dufile	
+fi
+
+df -h $dest |tee -a $logfile
+
+if [[ "$optdryrun" == " " ]]
+then
+	touch /mnt/$backupname/$backupname"_last.txt"
+fi
+
+sync 
+
+"$0"_check $(basename $logfile) >/dev/null
+
+echo -e "\nDone. Full log in $logfile"
+echo -e "\nCheck with $(basename $0)_check $(basename $logfile)"
+if [[ "$optdryrun" == " " ]] 
+then
+	echo -e "Diff with previous $(basename $0)_diff $1\n"
+fi

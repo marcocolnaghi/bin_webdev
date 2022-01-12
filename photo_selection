@@ -1,0 +1,20 @@
+#!/bin/bash
+#zenity --info --text="$*"
+destdir='/data/photo/_selection'
+[[ ! -d $destdir ]] && echo "Error: '$destdir' dir not found, please create" && exit 1 
+
+for par in $*
+do
+	photos="$photos $(echo $par|grep -i 'jpg')"
+done
+
+#cd $destdir
+for photo in $photos
+do
+	photodir="$(dirname $photo)"
+	[[ "$photodir" = "" ]] &&  photodir="$(pwd)"
+	
+	###ln -s "$photodir/$photo" "$photobname"_"$photo"
+	cp $photo $destdir/"$(basename $photodir)"_"$(basename $photo)"
+	shift
+done

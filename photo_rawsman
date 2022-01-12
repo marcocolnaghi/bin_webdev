@@ -1,0 +1,199 @@
+#!/bin/bash
+conffile="$HOME/.$(basename $0).rc"
+[ -f $conffile ] && . $conffile
+
+## zenity settings
+winsize='--width=600 --height=600'
+title="$(basename $0) - Raws Manager"
+#icon="--window-icon=/usr/share/icons/gnome/32x32/mimetypes/image.png"
+#echo $workdir
+#read a
+
+function createLensList() { 
+title="$(basename $0) - Raws Manager"
+winsize='--width=600 --height=600'
+
+a_le28="Mark Leitz Elmarit 28"
+a_le35="Mark Leitz Elmarit 35"
+a_ls50="Mark Leitz Summicron 50"
+a_le90="Mark Leitz Elmarit 90"
+a_m42z="Mark Zenitar 16"
+a_m42h="Mark Helios 44"
+a_m42f="Mark Fujinon 75-150"
+a_m42j="Mark Jupiter 85"
+
+m42_tag="Canon EF 35-80mm f/4-5.6"
+lens_tag=""
+
+	action=$(nice zenity $icon $winsize --title "$title" --list  --text "Create " --radiolist  --column "Pick" --column "Action" FALSE "$a_le28" FALSE "$a_le35" FALSE "$a_ls50" FALSE "$a_le90" FALSE "$a_m42z" FALSE "$a_m42h" FALSE "$a_m42f" FALSE "$a_m42j" )
+	pwd
+	#read a
+	[[ -z $workdir ]] && workdir="$(pwd)"
+	cd $workdir
+	pwd
+	#read a
+
+	lensfile=""
+	case "$action" in
+	"$a_le28")
+		lensfile="Leitz_Elmarit28.txt"
+		;;
+
+	"$a_le35")
+		lensfile="Leitz_Elmarit35.txt"
+		;;
+	"$a_ls50")
+		lensfile="Leitz_Summicron50.txt"
+		;;
+
+	"$a_le90")
+		lensfile="Leitz_Elmarit90.txt"
+		;;
+
+	"$a_m42z")
+		touch $workdir/m42_Zenitar16.txt
+		;;
+
+	"$a_m42h")
+		touch $workdir/m42_Helios44.txt
+		;;
+
+	"$a_m42f")
+		lensfile="m42_Fujinon75-150.txt"
+		lens_tag="$m42_tag"
+		;;
+
+	"$a_m42j")
+		touch $workdir/m42_Jupiter85.txt
+		;;
+
+
+	esac
+	if [ ! "$lensfile" = "" ]	
+	then
+		if [ ! -e $lensfile ]
+		then
+			if [ "$lens_tag" = "" ]
+			then
+				ls *.CR* |sort >$lensfile
+			else
+				for f in $(ls *.CR2) 
+				do 
+					[[ $(exiftool $f |grep "$lens_tag" |wc -l) -ge 1 ]] && echo $f>>$lensfile; 
+				done 
+			fi
+		else
+			zenity --error --text "Lens list\n$lensfile\nalready exist!" 
+		fi
+	fi
+}
+
+# if file or folder is passed go to that folder
+if [ -d "$1" ] 
+then
+	cd $1;
+else
+	[[ -d $workdir ]] && cd $workdir;
+fi
+
+workdir="$(pwd)"
+
+# ACTIONS LABELS
+a_sf="Select Folder"
+a_fm="File Manager"
+a_iv="Image Viewer"
+a_ot="Open Terminal"
+a_cll="Create a Lens list ->"
+a_rpl="Raws process loop"
+a_r2j="Raws 2 JPG"
+a_r2s="Move raws 2 subdir"
+a_getr="Get raws"
+a_r4tv="Reduce 4tv"
+a_et="Edit tags"
+a_mvraws="Move raws 2 rtree"
+a_rmt="Remove *.tif"
+a_mkexifdb="Make exif db"
+a_chkn="Store CHK validation"
+a_chka="Store CHK archive new results"
+
+while $(true)
+do
+	action=$(nice zenity $icon $winsize --title "$title" --list  --text "dir: $workdir" --radiolist  --column "Pick" --column "Action" TRUE "$a_sf" FALSE "$a_fm" FALSE "$a_iv" FALSE "$a_ot" FALSE "$a_cll" FALSE "$a_rpl" FALSE "$a_r2j" FALSE "$a_r2s" FALSE "$a_getr" FALSE "$a_r4tv" FALSE "$a_et" FALSE "$a_mvraws" FALSE "$a_rmt" FALSE "$a_mkexifdb" FALSE "$a_chkn" FALSE "$a_chka" )
+	echo $workdir
+
+	case "$action" in
+	"$a_sf")
+		workdir=$(zenity --file-selection --directory)
+		;;
+
+	"$a_fm")
+		nautilus "$workdir" &
+		;;
+
+	"$a_ot")
+		gnome-terminal --working-directory="$workdir" &
+		;;
+
+	"$a_cll")
+		createLensList
+		;;
+
+	"$a_iv")
+		geeqie "$workdir" &
+		;;
+
+	"$a_rpl")
+			[[ ! "$workdir" == "" ]] && gnome-terminal -e "/data/bin/photo_rawsprocloop $workdir"  &	
+		;;
+
+	"$a_rppc")
+		/data/bin/photo_rawsproc_chk "$workdir" -hppc 
+		;;
+
+	"$a_r2j")
+		[[ ! "$workdir" == "" ]] && gnome-terminal -e "/data/bin/photo_raws2jpg $workdir" &
+		;;
+
+	"$a_r2s")
+		/data/bin/photo_raws2subdir "$workdir"
+		;;
+
+	"$a_getr")
+		/data/bin/photo_getraws "$workdir"
+		;;
+
+	"$a_r4tv")
+		gnome-terminal -e "/data/bin/photo_red $workdir" &
+		;;
+
+	"$a_et")
+		/data/bin/photo_edittags "$workdir" &
+		;;
+
+	"$a_mvraws")
+		nohup /data/bin/photo_moveraws "$workdir"
+		;;
+
+	"$a_rmt")
+		/bin/rm "$workdir"/*.tif
+		;;
+
+	"$a_mkexifdb")
+		/data/bin/photo_exiffind -nodb -mkdb "$workdir"
+		;;
+
+	"$a_chkn")
+		gnome-terminal -e "sudo /data/bin/photo_chk -c -s $workdir" &&  [[ ! -f $workdir/photochk_chk.txt ]] && gksu "mv $workdir/photochk_new.txt $workdir/photochk_chk.txt" ; gksu "gvimdiff $workdir/photochk_chk.txt $workdir/photochk_new.txt"
+		;;
+
+	"$a_chka")
+		gnome-terminal -e "sudo /data/bin/photo_chk -a $workdir"
+		;;
+
+
+	esac
+
+	[[ "$action" == "" ]] && break
+done
+
+echo "workdir=\"$workdir\"" >"$conffile"

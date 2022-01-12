@@ -1,0 +1,19 @@
+#!/bin/bash
+
+mkdir Canon
+cd Canon
+for f in $(/bin/ls ../*IMG*.jpg)
+do 
+	ln -s $f .
+done
+cd -
+
+mkdir Fuji
+cd Fuji
+for f in $(/bin/ls ../*DSCF*.jpg)
+do 
+	ln -s $f .
+done
+cd -
+
+

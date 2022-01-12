@@ -1,0 +1,14 @@
+#!/bin/bash
+srcdir="red4tv"
+
+[[ ! -d $srcdir ]] && [[ ! "$(basename $(pwd))" = "$srcdir" ]] && echo Error: missing $srcdir dir && exit 1 
+
+[[ -z $1 ]] && echo -e Error: missing dest dir\nSyntax $0 '<'destdir'>' && exit 1
+[[ ! -d $1 ]] && echo -e Error: $1 is not a valid dir && exit 1
+
+[[ "$(basename $(pwd))" == "$srcdir" ]] && cd ..
+
+destdir="$(basename $(pwd))"
+destdir="$(echo $1|sed -e 's/\/$//')""/$destdir"
+[[ ! -d $destdir ]] && mkdir $destdir
+cp -puv $srcdir/* $destdir/

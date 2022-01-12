@@ -1,0 +1,24 @@
+#!/bin/bash
+
+
+#rsync -zav --progress --delete ./120908_Riccione/120908_Riccione_red /mnt/t/
+
+dest="/mnt/ipp"
+#smbmount -o username=MColnaghi //mcolnaghi2/ipp $dest
+mount -o credentials=/home/mrc/.smbcred //MColnaghi2/ipp /mnt/ipp/
+
+#destpath="/"
+
+destmount=$(mount|grep $dest | wc -l )
+[ "$destmount" = "0" ] && echo "Destination ($dest) not mounted" && exit 1
+mount
+echo 'PRESS A KEY TO CONTINUE (^C CANCEL)'
+read a
+
+for d in $(find . -type d -iname "*_red" |sort)
+do 
+	#rsync -zav --delete $d $dest
+	rsync -rtv --delete $d $dest
+done
+
+umount $dest

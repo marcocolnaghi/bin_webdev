@@ -1,0 +1,35 @@
+#!/bin/bash
+unalias -a
+hctdir=/data/photo/_cluts_test
+#      /dataw/photo/_cluts_test/HaldCLUT
+dim=600
+jf=$1
+
+type='.'
+[[ ! "$2" = "" ]] && type="$2"
+tbn=$(basename $0|rev|cut -b 1-2|rev)	# Co/Bw
+tdir=_hctest_$tbn	# _hctest_Co
+
+[[ ! "$(file -bi $jf|sed -e 's/;.*$//')" = "image/jpeg" ]] && echo -e "$(basename $0):\n\tError: $jf is not a jpeg image\n\n" && exit 1 
+
+cd $(dirname $jf)
+mkdir $tdir
+tf=$(basename $jf|sed -e 's/\.png$//i')
+testfile=$tf"_0000.png"
+[[ ! -f $tdir/$testfile ]] && convert $jf -resize 600x600 $tdir/$testfile
+
+cd $tdir 
+
+for f in $(ls $hctdir/$tbn|grep '.png$')
+do
+	echo $f
+	of=$tf$"_"$f 
+	convert $testfile $hctdir/$tbn/$f -hald-clut $of
+       	composite -compose difference $testfile $of diff.png	
+	pre=$(photomood.gambas $(pwd)/diff.png)
+	mv $of $pre"_"$of
+	mv diff.png $pre"_"$of"_diff.png"
+#	read a
+done
+
+

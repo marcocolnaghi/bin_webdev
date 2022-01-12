@@ -1,0 +1,44 @@
+#!/bin/bash
+
+[[ "$1" = "-n" ]] && dryrun=y && shift 1 
+
+rawdir='_crw'
+
+echo $(date) $0 $* >/tmp/$(basename $0).log
+
+# if folder or file is passed go to that folder
+[[ -d $1 ]] && cd $1
+[[ -d $1 ]] && [[ $(basename $1) = $rawdir ]] && cd $(dirname $1)
+[[ -f $1 ]] && cd $(dirname $1)
+
+[[ ! -d $rawdir ]] && echo Error: raw dir $rawdir does not exist && exit 1
+
+#destination dir
+ddir="$(pwd|sed -e 's/^.*\/photo\//\/data\/rawphoto\//')/$rawdir"
+
+if [ -e $ddir ] 
+then
+	echo Error: $ddir already exist! 
+	exit 1
+else
+	if [ "$dryrun" = "y" ] 
+	then
+		echo mkdir -p $(dirname $ddir)
+	else
+		mkdir -p $(dirname $ddir)
+		[[ ! "$?" = "0" ]] && echo Error creating $ddir && exit 1
+	fi
+fi
+
+if [ "$dryrun" = "y" ] 
+then
+	echo mv $rawdir $(dirname $ddir)
+	echo ln -rs $ddir .
+else
+	mv $rawdir $(dirname $ddir)
+	#ln -rs $(relpath $(pwd) $ddir) .
+	ln -rs $ddir .
+fi
+
+ 
+

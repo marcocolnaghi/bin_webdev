@@ -1,0 +1,17 @@
+#!/bin/bash
+exifdb='exif_db.txt'
+
+if [ ! "$1" = "" ]
+then
+	[[ -d $1 ]] && cd $1
+	[[ -f $1 ]] && cd $(basename $1) 
+fi
+
+[[ -f $exifdb ]] && exit 0
+
+#rm $exifdb
+for f in $(ls *.jpg *.JPG|sort)
+do 
+	
+	exiftool $f|sed -e "s/^/$f\t/" >>$exifdb
+done

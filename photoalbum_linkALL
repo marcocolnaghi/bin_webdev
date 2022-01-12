@@ -1,0 +1,10 @@
+#!/bin/bash 
+
+srcdir=/data/photoalbum 
+dstdir=/data/photoalbum/000000_ALL
+
+for f in $(find -L $srcdir -type f |grep -v $(basename $dstdir))
+do
+       lname=$dstdir/$(basename $(dirname $f))_$(basename $f)	
+	[[ ! -e $dstdir/$lname ]] && ln -s $f $lname
+done

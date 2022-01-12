@@ -1,0 +1,12 @@
+#!/bin/bash
+unalias -a
+mkdir trash
+for f in $(ls |grep '\-.*pp3')
+do
+	fb=$(echo $f|sed -e 's/\-.*$//')
+	for fr in $(ls |grep $fb)
+	do 
+		mv $fr trash;
+	done;
+done
+

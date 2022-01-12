@@ -1,0 +1,12 @@
+#!/bin/bash
+
+srcdir=/data/photo 
+dstdir=/data/photoalbum/
+for r in $(find $srcdir -type d -name '*_red'|grep '/20')
+do 
+	bnr=$(basename $r)
+	[[ ! "$(basename $(dirname $r))_red" = "$bnr" ]] && echo NO link $r && continue
+	[[ "${bnr:0:1}" < "0" || "${bnr:0:1}" > "9" ]] && echo NO link $r && continue
+	[[ ! -e $dstdir/$(basename $r) ]] && echo creating link '->' photoalbum/$(basename $r)
+	[[ ! -e $dstdir/$(basename $r) ]] && ln -s $r $dstdir/$(basename $r)
+done

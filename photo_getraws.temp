@@ -1,0 +1,50 @@
+#!/bin/bash
+unalias -a
+#echo $1 >>/tmp/msg
+
+if [ -d $1 ] 
+then
+	cd $1;
+elif [ -d $(dirname $1) ] 
+then 
+	cd $(dirname $1);
+else
+	exit 1;
+fi
+#pwd >>/tmp/msg
+
+rawdirs='./_crw ./all/_crw ./all'
+
+#for f in $('find . -maxdepth 1 -type f -iname *.jpg') 
+for f in $(ls |grep -i '\.jpg') 
+do
+	[[ ! -f $f ]] && break
+	#echo $f
+	for rd in $rawdirs
+	do
+	#echo -e "\t$rd"
+		for rfd in 's/p\.JPG/.CRW/' 's/\.JPG/.CRW/' 's/p\.JPG/.CR2/' 's/\.JPG/.CR2/' 's/p\.jpg/.crw/' 's/\.jpg/.crw/' 's/\p.jpg/.cr2/' 's/\.jpg/.cr2/' 's/p\.JPG/.ufraw/i' 's/\.JPG/.ufraw/i' 's/p\.JPG/r.ufraw/i' 's/\.JPG/r.ufraw/i' 's/p\.JPG/.ppc/i' 's/\.JPG/.ppc/i'
+		do
+			#echo -e "\t\t$rfd"
+			#echo -e "\t\t\t$f"
+			rawf=$(echo $f|sed -e $rfd)
+			#echo "\t\t\t$rawf"
+			##[[ ! -f $rawf ]] && [[ -f $rd/$rawf ]] &&  [[ ! -z $2 ]] && cp $rd/$rawf .
+			[[ ! -f $rawf ]] && [[ -f $rd/$rawf ]] && mv $rd/$rawf .
+			#mv $rd/$(echo $f|sed -e 's/\.JPG/.CR2/') .
+			#mv $rd/$(echo $f|sed -e 's/\.JPG/.ufraw/') .
+			#mv $rd/$(echo $f|sed -e 's/\.JPG/r.ufraw/') .
+		done
+	done
+done
+
+for f in *.jpg 
+do
+	mv $rawdir/$(echo $f|sed -e 's/\.jpg/.crw/') .
+	mv $rawdir/$(echo $f|sed -e 's/\.jpg/.cr2/') .
+	mv $rawdir/$(echo $f|sed -e 's/\.jpg/r.ufraw/') .
+done
+
+
+
+

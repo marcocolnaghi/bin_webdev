@@ -1,0 +1,20 @@
+#!/bin/bash
+
+for d in $(find . -type d)
+do
+	cd $d
+	[[ ! $? ]] && continue
+	exifrename -dt -execute -force
+	cd -
+done
+
+photo_finddup
+
+for d in $(find . -type d)
+do
+	cd $d
+	[[ ! $? ]] && continue
+	photo_finddup
+	cd -
+done
+

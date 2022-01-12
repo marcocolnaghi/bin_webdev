@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for img in *.jpg *.JPG 
+do
+	echo $img
+	imtime=$(metacam "$img" |grep -i "image creation date"|cut -b 42-46 |sed -e "s/://")
+	newfn=$(echo $img|sed -e "s/_/_$imtime\_/")
+	mv "$img" $newfn
+done

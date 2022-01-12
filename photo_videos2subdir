@@ -1,0 +1,24 @@
+#!/bin/bash
+
+subdir='_video'
+
+[[ ! -d $subdir ]] && mkdir ./$subdir
+
+[[ ! -d $subdir ]] && echo Missing video dir ./$subdir && exit 1
+
+#for f in *.JPG 
+#do
+#	mv $rawdir/$(echo $f|sed -e 's/\.JPG/.CRW/') .
+#	mv $rawdir/$(echo $f|sed -e 's/\.JPG/.CR2/') .
+#done
+
+mv *.avi $subdir
+mv *.mov $subdir
+mv *.thm $subdir
+mv *.AVI $subdir
+mv *.MOV $subdir
+mv *.THM $subdir
+
+
+
+

@@ -1,0 +1,10 @@
+[Desktop Entry]
+#copy in .local/share/applications/ and will appear in menu
+Name=Photo Raws Manager
+Comment=Simple dialog for raws photo management
+Exec=/data/bin/photo_rawsman
+Icon=emblem-photos
+Terminal=false
+Type=Application
+StartupNotify=false
+

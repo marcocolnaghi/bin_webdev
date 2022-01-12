@@ -1,0 +1,9 @@
+#!/bin/bash
+
+dirs=$(find . -maxdepth 1 -type d|grep -v '^\.$'|sort)
+
+for d in $dirs
+do
+	[[ ! -f $d/photo_tags.txt ]] &&  echo $d;
+done
+

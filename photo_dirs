@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#set -x
+
+function photodirs()
+{
+	depth=""
+	currentdir=$(basename $(pwd))
+	parentdir=$(basename $(dirname $(pwd)))
+	parentparentdir=$(basename $(dirname $(dirname $(pwd))))
+	for basedir in photo rawphoto
+	do 
+		[[ "$currentdir" == "$basedir" ]] && depth='-maxdepth 2 -mindepth 2'
+	done
+
+	for basedir in photo rawphoto
+	do 
+		[[ "$parentdir" == "$basedir" ]] && depth='-maxdepth 1 -mindepth 1'
+	done
+
+	for basedir in photo rawphoto
+	do 
+		[[ "$parentparentdir" == "$basedir" ]] && depth='-maxdepth 0 -mindepth 0'
+	done
+
+	##echo cd=$currentdir pd=$parentdir depth=$depth
+	[[ ! -z "$depth" ]] && find . $depth -type d|sort|grep -vE '\/.thumbnails'|grep -v '/red4tv/' |grep -v '/red4tv$'
+}
+
+
+

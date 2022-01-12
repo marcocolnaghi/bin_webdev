@@ -1,0 +1,72 @@
+#!/bin/bash
+
+####
+#	EXAMPLE: calling with param $2 to add border
+#	photo_red . "-bordercolor white -border 40x40"
+#
+
+# if file or folder is passed go to that folder
+[[ -z $1 ]] && workdir="$(pwd)"
+
+imgside=2048
+
+if [ -d $1 ] 
+then
+	cd $1
+	workdir="$1"
+else
+	if [[ -d $(dirname $1) ]] 
+	then 
+		cd $(dirname $1) 
+	else
+		if [ "$1" -eq "$1" ] 2>/dev/null	
+		then
+			imgside="$1"	
+		else
+			[[ ! -d $1 ]] && echo Error: $1 not a valid dir
+			exit 1
+		fi
+	fi
+fi
+
+
+if [[ "$(basename $(pwd))" = "rjpg" || "$(basename $(pwd))" = "rjpg_rt" ]]
+then
+	destdir=$(basename $(dirname $(pwd)))_red
+else
+	if [[ "$(basename $(pwd))" = "all" ]]
+	then
+		destdir=$(basename $(dirname $(pwd)))_all_red
+	else
+		destdir=$(basename $(pwd))_red
+	fi
+fi
+
+[[ ! -d $destdir ]] && mkdir $destdir
+[[ ! -d $destdir ]] && echo Error: cannot create $destdir && exit 1 
+#[[ -d rjpg ]] && subdir="rjpg/"
+
+filemask='*.jpg *.JPG *.tif *.TIF *.png *.PNG'
+[[ "$2" = "-all" ]] && filemask='*.jpg *c.JPG *.JPG' && shift 1
+#for f in $(ls *.jpg *c.JPG *.JPG)
+#for f in $(ls *.jpg *c.JPG)
+
+for f in $(ls $filemask)
+do 
+	echo $f
+	of=$destdir/$(echo $f|sed -e 's/\..*$/_red\.jpg/') 
+	echo convert $f -resize 2048x2048 -unsharp @ $2 -quality 90 $of
+	#read a
+	
+	[[ $f -nt $of ]] && convert $f -resize "$imgside"x"$imgside" -unsharp @ $2 -quality 90 $of
+	### OLD
+	#[[ $f -nt $of ]] && convert $f -resize 2048x2048 -quality 87 $of
+	#[[ $f -nt $of ]] && convert $f -resize 2048x2048 -unsharp 0 -quality 85 $of
+	##[[ $f -nt $of ]] && convert $f -resize 1920x1080 -unsharp 0 -quality 90 $of
+	#[[ $f -nt $of ]] && convert $f -resize 1920x1080 -quality 90 $of
+	#convert $f -resize 1024x1024 -unsharp 0 -quality 85 flickr/$of
+done
+#for f in $(ls "$subdir"*.jpg "$subdir"*.JPG)
+#do 
+#	[[ $f -nt $destdir/$(basename $f) ]] && echo $f && convert $f -resize 1920x1920 -quality 95 $destdir/$(basename $f);
+#done

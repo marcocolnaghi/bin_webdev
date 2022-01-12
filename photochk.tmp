@@ -1,0 +1,143 @@
+#!/bin/bash
+
+#set -x
+
+outfile=photochk_chk.txt
+outfilenew=photochk_new.txt
+outfileold=photochk_old.txt
+
+function syntax() 
+{
+	echo $(basename $0) '<-h|-c|-v|-a> [dir]'
+	echo -e '\t-h\print help'
+	echo -e '\t-c\trun check'
+	echo -e '\t-v\tview result'
+	echo -e '\t-d\tview differences'
+	echo -e '\t-a\tarchive result'
+
+	exit 1 
+}
+
+docheck=0
+doviewresult=0
+doarchive=0 
+doviewdiff=0 
+dosingledir=0 
+[[ "$1" == "" ]] && syntax
+while getopts "hcvdas" OPTION
+do
+	case $OPTION in
+	h)	syntax
+			;;
+	c)	docheck=1
+			;;
+	v)	doviewresult=1
+			;;
+	d)	doviewdiff=1
+			;;
+	a)	doarchive=1
+			;;
+	s)	dosingledir=1
+			;;
+	?)	syntax
+			;;
+	esac
+done
+
+shift $(($OPTIND - 1))
+
+function photodirs()
+{
+	find . -maxdepth 2 -mindepth 2 -type d 
+}
+
+function filehash()
+{
+	md5sum $1
+}
+
+function hashvalue()
+{
+	echo "${1:0:32}"
+}
+
+function basename()
+{
+	local name="${1##*/}"
+        echo "${name%$2}"
+}
+
+
+function checkdir()
+{
+	#[[ ! "$filesdir" == "" ]] && cd filesdir
+	for f in $(find . -type f|grep -v $outfile|grep -v $outfilenew|grep -v $outfileold|cut -b 3-)
+	do
+		hashresult=$(filehash $f)
+		#echo "$(hashvalue $hashresult) $(basename $f)"
+		echo -e "$(basename $f)\t$(hashvalue $hashresult)"
+	done
+}
+
+curdir=$(pwd)
+
+if [[ -d $1 ]]
+then
+	cd $1
+else
+	exit 1
+fi
+
+if [[ "$dosingledir" == "1" ]]
+then
+	checkdir .|sort -k 2 >$outfilenew
+else
+	if [[ "$docheck" == "1" ]]
+	then
+		for d in $(photodirs)
+		do
+			$0 -s $d
+		done
+	fi
+	if [[ "$doviewresult" == "1" ]]
+	then
+		for d in $(photodirs)
+		do
+			[[ -f $d/$outfilenew ]] && echo "[$d]" && cat $d/$outfilenew
+		done
+	fi
+	if [[ "$doarchive" == "1" ]]
+	then
+		for d in $(photodirs)
+		do
+			[[ -f $d/$outfile ]] && mv $d/$outfile $d/$outfileold
+			[[ -f $d/$outfilenew ]] &&  mv $d/$outfilenew $d/$outfile
+		done
+	fi
+	if [[ "$doviewdiff" == "1" ]]
+	then
+		for d in $(photodirs)
+		do
+			if [[ -f $d/$outfilenew ]] 
+			then
+				new="$d/$outfilenew"
+				old="$d/$outfile"
+
+			else
+				new="$d/$outfile"
+				old="$d/$outfileold"
+			fi
+			[[ ! -f $new ]] && new="/dev/null"
+			[[ ! -f $old ]] && old="/dev/null"
+			echo "[$d]"
+			diff $new $old |sed -e 's/</ADD/'|sed -e 's/>/DEL/'|sort -k 2|grep -e '^[[|ADD|DEL]'
+		done
+	fi
+
+fi
+
+cd $curdir
+
+
+
+

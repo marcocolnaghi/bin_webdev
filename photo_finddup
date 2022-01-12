@@ -1,0 +1,12 @@
+#!/bin/bash
+
+for f in $(find . -maxdepth 1 -type f)
+do
+	if [ $(find . -mindepth 2 -type f -name $(basename $f))|grep -v '/_dup/' ]
+	then
+		echo $f '*dup' 
+		mkdir _dup
+		mv $f _dup
+	fi
+done
+

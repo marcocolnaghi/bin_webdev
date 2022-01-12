@@ -1,0 +1,5 @@
+#!/bin/bash
+
+subdname="$(basename $(pwd))"
+
+mkdir $subdname

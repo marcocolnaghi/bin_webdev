@@ -1,0 +1,8 @@
+#!/bin/bash
+
+rename 's/.*DSC/DSC/' *DSC*
+exiv2 -v -r IMT_%Y%m%d_%H%M%S_:basename: rename DSC*
+
+rename 's/.*IMG/IMG/' *IMG*
+exiv2 -v -r IMT_%Y%m%d_%H%M%S_:basename: rename IMG*
+

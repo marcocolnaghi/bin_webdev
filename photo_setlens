@@ -1,0 +1,168 @@
+#!/bin/bash
+echo $(basename $0) V 0.1 19/05/2011
+
+source $(dirname $0)/bash_funcs
+
+#check availability of external commands 
+checkCommand exiftool
+
+subdirs="-maxdepth 1"
+mode=" not recursive"
+execute="0"
+dir='.'
+
+while [[ ! "$1" == "" ]]
+do
+	[[ "$1" == "-r" ]] && mode="recursive" && subdirs=""
+
+	[[ "$1" == "-e" ]] && execute="1"
+
+	[[ -d $1 ]] && files="$(find $1 $subdirs -type f -iname '*.jpg'|sort)"
+	[[ -f $1 ]] && files="$1"
+	shift
+done
+#pwd >>/tmp/msg
+#echo mode=$mode subdirs=$subdirs
+#echo execute=$execute
+#echo files=$files
+
+[[ "$execute" = "0" ]] && mode="test,$mode"
+mode="mode:$mode"
+echo $mode
+
+for f in $files
+do
+	lenstype="$(exiftool -D $f|grep '\- Lens ID '|cut -d ":" -f 2-|sed -e 's/^ *//' -e 's/ *$//')"
+	case $lenstype in
+		'Canon EF 35-80mm f/4-5.6')
+			if [[ "$(ls |grep -i jupiter|wc -l)" -ge "1" ]] 
+			then
+				model="Jupiter9 85mm f/2 MC"
+				flen="85.0 mm"
+			elif [[ "$(ls |grep -i helios|wc -l)" -ge "1" ]] 
+			then
+				model="Helios 44M-4 2/58"
+				flen="58.0 mm"
+			elif [[ "$(ls |grep -i zenitar|wc -l)" -ge "1" ]] 
+			then
+				model="MC Zenitar-M2.8/16"
+				flen="16.0 mm"
+			else
+				# this is Leitz family
+				bname=$(basename $(echo $f |sed -e 's/r.jpg//' -e 's/r_red.jpg//' -e 's/\..*//'))
+				if [ "" = "$2" ]
+				then
+					lens=$(grep -l $bname *eitz*.txt  |tr [:upper:] [:lower:] |sed -e 's/leitz_//' -e 's/\..*//')
+				else
+					lens=$(grep -l $bname ../*eitz*.txt  |tr [:upper:] [:lower:] |sed -e 's/leitz_//' -e 's/\..*//')
+
+				fi
+				#	lens=$(grep -l $(echo $f |sed -e 's/r.jpg//' -e 's/\..*//') *eitz*.txt  |tr [:upper:] [:lower:] |sed -e 's/leitz_//' -e 's/\..*//')
+					model="Leitz ?"
+					flen="50.0 mm"
+
+					case $lens in
+					'elmarit28')
+						model="Leitz Wetzlar Elmarit-R 1:2.8/28"
+						flen="28.0 mm"
+					;;
+
+					'elmarit35')
+						model="Leitz Wetzlar Elmarit-R 1:2.8/35"
+						flen="35.0 mm"
+					;;
+
+					'summicron50')
+						model="Leitz Canada Summicron-R 1:2/50"
+						flen="50.0 mm"
+					;;
+				
+					'elmarit90')
+					model="Leitz Wetzlar Elmarit-R 1:2.8/90"
+					flen="90.0 mm"
+					;;
+				*)
+					echo "ERROR: MISSING LENS CONFIG"
+					#read xxx
+					exit 1
+					;;
+				esac
+			fi
+			echo "$f lens: $model"
+			[[ "$execute" = "1" ]] && exiftool -P -overwrite_original \
+				-LensModel="$model" \
+				-FocalType='Fixed' \
+				-FocalLength="$flen" \
+				-LongFocal="$flen" \
+				-ShortFocal="$flen" \
+				$f
+				#-LensID='Jupiter9 85mm f/2 MC' \
+				#-LensType='Jupiter9 85mm f/2 MC' \
+			;;
+		'Canon EF 28-105mm f/3.5-4.5 USM')
+			echo "$f lens: Tamron SP AF 70-300 F/4-5.6 Di VC USD"
+			[[ "$execute" = "1" ]] && exiftool -P -overwrite_original \
+				-LensModel='Tamron SP AF 70-300 F/4-5.6 Di VC USD' \
+				$f
+			;;
+		'Unknown (0)')
+		# this is Leitz family
+			echo Lens of Leitz family
+			#read a
+			bname=$(basename $(echo $f |sed -e 's/r.jpg//' -e 's/\..*//' -e 's/r_red.jpg//'))
+			if [ -z $2 ]
+			then
+				lens=$(grep -l $bname *eitz*.txt  |tr [:upper:] [:lower:] |sed -e 's/leitz_//' -e 's/\..*//')
+			else
+				lens=$(grep -l $bname ../*eitz*.txt  |tr [:upper:] [:lower:] |sed -e 's/leitz_//' -e 's/\..*//')
+
+			fi
+
+			case $lens in
+			'elmarit28')
+				model="Leitz Wetzlar Elmarit-R 1:2.8/28"
+				flen="28.0 mm"
+			;;
+
+			'elmarit35')
+				model="Leitz Wetzlar Elmarit-R 1:2.8/35"
+				flen="35.0 mm"
+			;;
+
+			'summicron50')
+				model="Leitz Canada Summicron-R 1:2/50"
+				flen="50.0 mm"
+			;;
+			
+			'elmarit90')
+				model="Leitz Wetzlar Elmarit-R 1:2.8/90"
+				flen="90.0 mm"
+			;;
+
+			*)
+				echo "ERROR: MISSING LENS CONFIG FOR $f"
+				#read xxx
+				exit 1
+			;;
+			esac
+
+						
+			[[ ! -z "$model" ]] && ftype="Fixed"
+			echo "$f lens: $model"
+			[[ "$execute" = "1" ]] && exiftool -P -overwrite_original \
+				-LensModel="$model" \
+				-LensType="$model" \
+				-FocalType="$ftype" \
+				-FocalLength="$flen" \
+				-LongFocal="$flen" \
+				-ShortFocal="$flen" \
+				$f
+			;;
+	
+	esac
+
+done
+
+
+exit 0
+

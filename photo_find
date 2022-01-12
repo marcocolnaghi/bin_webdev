@@ -1,0 +1,56 @@
+#!/bin/bash
+
+#[[ "$1" == "" ]] && echo -e "$(basename $0) ver. 0.1 14/06/2010\nError:missing parameter \n" && exit 1
+tagsfile=photo_tags.txt
+
+[[ -d $1 ]] && cd $1 && shift
+
+if [ "$1" == "" ] 
+then 
+	#echo -e "$(basename $0) ver. 0.1 14/06/2010\nError:missing search strings\n" && exit 1
+	echo -e "$(basename $0) ver. 0.1 14/06/2010\nError:missing parameter \n" 
+	echo -n "Search strings:"
+	read searchstrings
+else
+	searchstrings="$*"
+fi
+#echo $1 $2
+#pwd
+
+[[ "$searchstrings" == "" ]] && echo "Error: search strings empty" && exit 1  
+
+grexp=$(echo $searchstrings|sed -e 's/^ *//'| sed -e 's/ /|/')
+
+#echo $grexp
+
+#while [ ! "$1" == "" ]
+#do
+#	grexp="$grexp|"$1;
+#	shift
+#done
+
+#grexp="$(echo $grexp|cut -b 2-)"
+#echo $grexp
+##grep -rE "$grexp" .|sort	
+
+currentdir=$(basename $(pwd))
+parentdir=$(basename $(dirname $(pwd)))
+parentparentdir=$(basename $(dirname $(dirname $(pwd))))
+for basedir in photo phototemp rawphoto
+do 
+	[[ "$currentdir" == "$basedir" ]] && depth='-maxdepth 3 -mindepth 3'
+	[[ "$currentdir" == "$basedir" ]] && ddepth='-maxdepth 2 -mindepth 2'
+done
+
+for basedir in photo phototemp rawphoto
+do 
+	[[ "$parentdir" == "$basedir" ]] && depth='-maxdepth 2 -mindepth 2'
+	[[ "$parentdir" == "$basedir" ]] && ddepth='-maxdepth 1 -mindepth 1'
+done
+tempfile=/tmp/$(basename $0)_$$.tmp
+echo -e "\nSearch results:"
+find . $ddepth -type d |grep --color -iE "$grexp" >$tempfile
+find . $depth -name $tagsfile -exec grep --color -HiE "$grexp" '{}' \;>>$tempfile
+
+cat $tempfile|sort |grep --color -iE "$grexp"
+/bin/rm $tempfile

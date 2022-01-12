@@ -1,0 +1,13 @@
+#!/bin/bash
+
+[[ ! "$(basename $(pwd))" = "show" ]] && mkdir show
+cd show
+prog=0
+
+for f in $(ls ../*.JPG ../*.jpg)
+do
+	prog=$(($prog+10))
+	dest=$(printf %04d $prog)_$(basename $f)
+	[[ ! -e $dest ]] && ln -s $f $dest;
+done
+

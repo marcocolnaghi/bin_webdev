@@ -1,0 +1,12 @@
+#!/bin/bash
+unalias -a 
+
+for f in $(find . -type l -iname 'IM*.JPG')
+do 
+	name=$(echo $f|sed -e 's/^.*\///') 
+	linkname=$(find . -name $name -printf '%l\r\n')
+	newname="$(basename $(dirname $linkname))"_"$name"
+	mv -v $name $newname
+done
+
+

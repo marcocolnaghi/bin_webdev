@@ -1,0 +1,62 @@
+#!/bin/bash
+
+function createLensList() { 
+title="$(basename $0) - Raws Manager"
+winsize='--width=600 --height=600'
+
+a_le28="Mark Leitz Elmarit28"
+a_le35="Mark Leitz Elmarit35"
+a_ls50="Mark Leitz Summicron50"
+a_le90="Mark Leitz Elmarit90"
+a_m42z="Mark Zenitar16"
+a_m42h="Mark Helios44"
+a_m42j="Mark Jupiter85"
+
+	action=$(nice zenity $icon $winsize --title "$title" --list  --text "Create " --radiolist  --column "Pick" --column "Action" FALSE "$a_le28" FALSE "$a_le35" FALSE "$a_ls50" FALSE "$a_le90" FALSE "$a_m42z" FALSE "$a_m42h" FALSE "$a_m42j" )
+	
+	[[ -z $workdir ]] && workdir="$(pwd)"
+
+	lensfile=""
+	case "$action" in
+	"$a_le28")
+		lensfile="Leitz_Elmarit28.txt"
+		;;
+
+	"$a_le35")
+		lensfile="Leitz_Elmarit35.txt"
+		;;
+	"$a_ls50")
+		lensfile="Leitz_Summicron50.txt"
+		;;
+
+	"$a_le90")
+		lensfile="Leitz_Elmarit90.txt"
+		;;
+
+	"$a_m42z")
+		touch $workdir/m42_Zenitar16.txt
+		;;
+
+	"$a_m42h")
+		touch $workdir/m42_Helios44.txt
+		;;
+
+	"$a_m42j")
+		touch $workdir/m42_Jupiter85.txt
+		;;
+
+
+	esac
+	if [ ! "$lensfile" = "" ]	
+	then
+		if [ ! -e $lensfile ]
+		then
+			ls *.CR* |sort >$lensfile
+		else
+			zenity --error --text "Lens list\n$lensfile\nalready exist!" 
+		fi
+	fi
+}
+
+createLensList
+

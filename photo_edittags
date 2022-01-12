@@ -1,0 +1,17 @@
+#!/bin/bash 
+
+tagsfile=photo_tags.txt
+photobasedir=/data/photo
+
+if [ -d $1 ] 
+then
+	cd $1;
+elif [ -d $(dirname $1) ] 
+then 
+	cd $(dirname $1);
+else
+	exit 1;
+fi
+
+gvim -o $tagsfile $photobasedir/$tagsfile
+

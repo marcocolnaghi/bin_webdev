@@ -1,0 +1,20 @@
+#!/bin/bash
+unalias -a
+echo $1
+[[ "$1" = "" ]] && echo -e "$(basename $0) \n Error: missing parameter\n\t$(basename $0) <-a|file.pp3>\n\n" && exit 1
+
+
+if [ "$1" = "-a" ]
+then
+	for f in $(ls *.pp3)
+	do
+		$0 $f	
+	done
+else
+	pp3="$(cat $1)"
+
+	cp -puv $1 $1.bak
+
+	echo "$pp3" |sed -e 's/\/data\/photo\/_cluts/\/dataw\/photo\/_cluts/' >$1
+fi
+

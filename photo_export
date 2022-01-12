@@ -1,0 +1,15 @@
+#!/bin/bash
+
+[[ "$1" = "" ]] && exit 1
+
+edir=~/Desktop/$(basename $0)
+
+[[ ! -d $edir ]] && mkdir $edir
+[[ ! -d $edir ]] && exit 1
+#while [ ! "$1" = "" ]
+	cp $1 $edir/$(basename $(dirname $1))_$(basename $1)
+#	shift 1
+#wend
+
+#pause
+

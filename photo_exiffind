@@ -1,0 +1,110 @@
+#!/bin/bash
+
+exifdb='exif_db.txt'
+
+error=""
+pname=$(basename  $0)
+startdir='.'
+exifname=""
+nodb=""
+mkdb=""
+
+source "$(dirname $(which $0))/photo_dirs"
+
+function syntax() {
+	echo -e "$pname ver 0.2 12/09/11"
+	echo -e "\n$error"
+	echo 'Syntax to search exif tag values:'
+	echo -e "\t$pname <-tag str> <[-val val]|[-nval val1-val2]>\n"
+	echo 'Syntax to search dirs missing exif db:'
+	echo -e "\t$pname <-nodb> [-mkdb]\n"
+}
+
+function shownodb() {
+	for d in $(photodirs)
+	do
+		[[ ! -f $d/$exifdb ]] && echo $d
+	done
+}
+
+function makenodb() {
+	for d in $(shownodb)
+	do
+		echo $d
+		cd $d
+		for f in $(ls *.jpg *.JPG|sort)
+		do 
+
+			exiftool $f|sed -e "s/^/$f\t/" >>$exifdb
+		done
+		cd - >/dev/null
+	done
+	exit 0
+}
+
+# reading parameters
+while [ ! "$1" = "" ]
+do
+	par="$1"
+	[[ "-h" = "$par" ]] && syntax && exit 1 
+	[[ "-nodb" = "$par" ]] && nodb="1" && shift && continue 
+	[[ "-mkdb" = "$par" ]] && mkdb="1" && shift && continue 
+	[[ -d $par ]] && startdir="$par" && shift && continue
+	[[ "-tag" = "$par" ]] && shift && exiftag="$1" && shift && continue  
+	[[ "-val" = "$par" ]] && shift && exifval="$1" && shift && continue 
+	[[ "-nval" = "$par" ]] && shift && exifnval="$1" && shift && continue 
+	error="\tError: unknown parameter \"$par\"\n" && shift
+done
+[[ ! -z $error ]] && syntax && exit 1
+
+[[ "$nodb" = "1" ]] && [[ "$mkdb" = "1" ]] && makenodb && exit 0
+[[ "$nodb" = "1" ]] && shownodb && exit 0
+
+exifminnval="$(echo $exifnval|cut -d '-' -f 1)"
+exifmaxnval="$(echo $exifnval|cut -d '-' -f 2)"
+[[ "$exifmaxnval" = "" ]] && exifmaxnval="$exifminnval"
+
+#echo $exifminnval $exifmaxnval
+count=0
+[[ "$exiftag" = "" ]] && error="$error\tError: -tag zzz is mandatory!\n" && syntax && exit 1
+[[ "$exifval" = "" ]] && [[ "$exifminnval" = "" ]] && [[ "$exifmaxnval" = "" ]] && error="\tError: -val val1 or -nval val1-val2 is mandatory!\n" && syntax && exit 1
+
+echo -e "Searching in dir\n$startdir"
+echo -e "for tag \"$exiftag\""
+echo -e "with value $exifval$exifnaval\n\n"
+#echo $exifnval
+
+cd $startdir
+	
+if [ ! "$exifval" = "" ]
+then
+## search for exact value
+	for db in $(find . -name "$exifdb" -printf '%P\n'|sort)
+	do
+		dir="$(dirname $db)\/" 
+		#dir=$(echo "$dir"/|sed -e 's/\//\\\//g')
+
+		#echo $dir
+		grep -i "$exiftag" "$db"|grep -i "$exifval"|tr -s ' '|sed -e "s/^/$dir/"
+	done
+
+else 
+## search numeric value
+	for db in $(find . -name "$exifdb" -printf '%P\n'|sort)
+	do
+		dir="$(dirname $db)" 
+		[[ "$dir" = "." ]] && dir="$(basename $(pwd))"
+		dir="$dir\/"
+		grep -i "$exiftag"'.*:' $db|sort |(while read line 
+		do
+			#separating exif val from tag
+			exifval="$(echo $line|cut -d ':' -f 2)" && exifval="$(echo $exifval|cut -d " " -f 1)"
+			#checking values
+			exp="$exifminnval <= $exifval && $exifval <= $exifmaxnval"
+			[[ "$(echo $exp|bc)" = "1" ]] && echo $line|sed -e     "s/^/$dir/" 
+
+		#fi
+		done); 
+	done
+fi
+

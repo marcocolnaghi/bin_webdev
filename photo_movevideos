@@ -1,0 +1,45 @@
+#!/bin/bash
+subdir='_video'
+cdir=$(pwd)
+
+backpath=''
+fwdpath="/$(basename $cdir)"
+cdir=$(dirname $cdir)
+dirp=$(basename $cdir)
+while [[ ! "$dirp" = 'data' ]]
+do	
+	lpath="../$lpath"
+	dirp=$(basename $cdir)
+	backpath=$backpath'../'
+	[[ "$backpath" = "../../../../../../../../../" ]] && echo "Error: data dir not found" && exit 1
+	[[ ! "$dirp" = "data" ]] && fwdpath="/$dirp"$fwdpath
+	cdir=$(dirname $cdir)
+	
+	#echo cdir=$cdir
+	#echo dirp=$dirp
+	#echo backpath=$backpath
+	#echo fwdpath=$fwdpath
+	#read a;
+done
+
+ddir=$(echo "$backpath""$fwdpath"|sed -e 's/\/photo\//\/video\//' -e 's/\/\//\//')
+echo $ddir
+
+
+if [[ -e $ddir/$subdir ]]
+then
+	echo -e "Error: dstination dir already exist:\n\t$ddir/$subdir"
+	exit 1
+fi
+
+if [[ ! -d $ddir ]]
+then
+	mkdir -p $ddir
+	[[ ! "$?" = "0" ]] && echo Error creating $ddir && exit 1
+fi
+
+mv $subdir $ddir 
+ln -s $ddir/$subdir . 
+
+ 
+

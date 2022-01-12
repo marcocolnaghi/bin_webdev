@@ -1,0 +1,88 @@
+#!/bin/bash
+ver="0.1"
+unalias -a 
+echo -e "\n$(basename $0) $ver $(stat -c %y exifrename |cut -d ' ' -f 1) \n"
+
+par1=$1
+
+while [ ! -z $2 ]
+do
+#	echo \$2=$2
+	case $2 in
+		-force ) force='y';;
+		-execute ) execute='y';;
+		-ignorelen ) ignorelen='y';;
+	esac
+	shift 1
+done 
+
+#echo force=$force
+#echo execute=$execute
+#echo ignorelen=$ignorelen
+
+
+for f in $(ls *.JPG *.jpg *.CRW *.crw *.CR2 *.cr2 *.FRW *.frw *.ARW *.arw *.RAF *.raf 2>/dev/null)
+do
+	case $par1 in
+	-ca ) 
+		namepre="CA-$(exiftool -s3 -Make $f| sed -e 's/ //g')"-"$(exiftool -s3 -Model $f| sed -e 's/ //g')"_
+		namenew="$namepre"$f;;
+	-dt ) 
+		namepre="DT-$(exiftool -s3 -CreateDate -d %y%m%d_%H%M%S $f)"_
+		namenew="$namepre"$f;;
+	-fl ) 
+		namepre="000$(exiftool -s3 -FocalLength $f|sed -e 's/\..*$//' -e 's/ //g')"
+		namepre="FL-"$(echo $namepre|rev|cut -c1-3|rev)_
+		namenew="$namepre"$f;;
+	-is ) 
+		namepre="ISO-$(exiftool -s3 -ISO $f|sed -e 's/ //g')"_
+		namenew="$namepre"$f;;
+	-lm ) 
+		namepre="LM-$(exiftool -s3 -LensModel $f|sed -e 's/ //g')"_
+		namenew="$namepre"$f;;
+	-mk ) 
+		namepre="MK-$(exiftool -s3 -Make $f|sed -e 's/ //g')"_
+		namenew="$namepre"$f;;
+	* )
+		echo Error: wrong parameters
+		echo Syntax...
+		echo -e "\t"$(basename $0) '<[|-dt|-fl|-lm|-mk]> [-execute] [-force]'
+		echo -e "\t-dt	 date time"
+		echo -e "\t-fl	 focal length"
+		echo -e "\t-is	 ISO"
+		echo -e "\t-lm	 lens model"
+		echo -e "\t-mk	 maker\n"
+		echo -e "\t-execute	 real rename links only"
+		echo -e "\t-force	 real rename links and files"
+		echo -e "\t-ignorelen	 real rename links and files"
+		exit 1;;
+	esac
+	[[ "$namepre" = "" ]] && continue
+	
+	bname=$(basename $f)
+	[[ ${#bname} -ge 14 ]] && echo $f '*skipped' && continue
+
+	if [ "${f:0:${#namepre}}" = "$namepre" ] 
+	then
+		echo $f '*skipped'
+	else
+		#output
+		echo -n $f' --> '"$namepre"$f 
+	       	[[ ! -L $f ]] && echo -n ' *force' 
+		echo
+
+		[[ -L $f ]] && [[ ! -z $execute ]] && mv $f $namepre"$f"
+		[[ ! -L $f ]] && [[ ! -z $execute ]] && [[ ! -z $force ]] && mv $f $namepre"$f"
+
+	fi
+
+#[[ "$namenew" = "_$f" ]] && namenew="" 	
+#if [ ! "$namenew" = "" ] 
+#then
+#	namenew=$(echo $namenew|sed -e 's/__/_/g')
+#	
+#	echo $f ' -> ' "$(echo $namenew) $([[ ! -L $f ]] && echo ' *force')"
+#	[[ -L $f ]] && [[ "$2" = '-execute' ]] && mv $f $namenew
+#	[[ ! -L $f ]] && [[ "$2" = '-execute' ]] && [[ "$3" = '-force' ]] && mv $f $namenew
+#fi
+done

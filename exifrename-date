@@ -1,0 +1,11 @@
+#!/bin/bash 
+
+[[ -z $1 ]] && exit 1 
+[[ ! -h $1 ]] && echo "$1 not a link" &&  exit 1
+
+
+newname="$(exiftool $1 |grep -i 'Create Date' |head -n 1 |sed -e 's/^.*: //' -e 's/ /_/g' -e 's/://g')_$1"
+
+echo $1 ' -> '$newname 
+[[ $2 = -execute ]] && mv $1 FL$(exiftool $1 |grep -i 'Focal Length' |head -n 1 |sed -e 's/^.*: //' -e 's/\..*$/mm/')_$1
+

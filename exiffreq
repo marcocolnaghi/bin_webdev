@@ -1,0 +1,64 @@
+#!/bin/bash
+ver="0.1"
+unalias -a 
+echo -e "\n$(basename $0) $ver $(stat -c %y $0 |cut -d ' ' -f 1) \n"
+
+tot=0
+case $1 in
+	-ca )	
+		msg="Counting Camera usage"
+		tag="CA"
+		;;
+	-dt )	
+		msg="echo Counting Date usage"
+		tag="DT"
+		;;
+	-fl )	
+		msg="Counting Focal Length usage"
+		tag="FL"
+		;;
+	-is )	
+		echo 
+		msg="Counting ISO setttings"
+		tag="ISO"
+		;;
+	-lm )	
+		msg="echo Counting Lens Model usage"
+		tag="LM"
+		;;
+	-mk )	
+		msg="Counting Maker usage"
+		tag="MK"
+		;;
+	* )
+		echo Error: wrong parameters
+		echo Syntax...
+		echo -e "\t"$(basename $0) '<[|-dt|-fl|-lm|-mk]>'
+		echo -e "\t-ca	 camera"
+		echo -e "\t-fl	 focal length"
+		echo -e "\t-is	 ISO settings"
+		echo -e "\t-lm	 lens model"
+		echo -e "\t-mk	 maker"
+		echo -e "\n\t-execute	 real rename links only"
+		echo -e "\t-execute	 real rename links and files"
+		exit 1
+		;;
+esac
+
+echo $msg
+
+#check existance
+tagmask="*"$tag"-*"
+[[ "$(ls $tagmask 2>/dev/null |wc -l)" = "0" ]] \
+	&& echo -e "Error: missing files with "$tag" indication\n" \
+	&& exit 1
+cleanbeforetag='s/.*_'$tag'-/'$tag'-/' # remove everything before tag
+cleanaftertag='s/_.*$//'
+
+#count and print freq
+ls *"$tag"-* |sed -e $cleanbeforetag -e $cleanaftertag|sort |uniq -c 
+
+#print total
+tot=$(ls *"$tag"-* |wc -l)
+echo -e "Tot: \t$tot\n"	
+

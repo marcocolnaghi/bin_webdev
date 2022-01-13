@@ -1,0 +1,12 @@
+GIT NOTES
+---------
+
+Clone repo in current folder:
+	git clone git@github.com:marcocolnaghi/bin_mcolnaghi.git
+
+Rename remote branch:
+	git remote rename main master
+
+Set remote default branch:
+	git branch --set-upstream-to master/master	
+

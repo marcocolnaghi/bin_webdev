@@ -1,0 +1,2 @@
+#!/bin/bash
+apt-get remove $(deborphan |sed -e 's/:.*$//')

@@ -1,0 +1,28 @@
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a device; this may
+# be used with UUID= as a more robust way to name devices that works even if
+# disks are added and removed. See fstab(5).
+#
+# <file system>             <mount point>  <type>  <options>  <dump>  <pass>
+UUID=4df36133-e6f6-45a4-81a8-b7501d0b34b3 /              btrfs   subvol=/@,defaults,noatime,space_cache,autodefrag,compress=zstd,discard=async,ssd 0 0
+UUID=4df36133-e6f6-45a4-81a8-b7501d0b34b3 /home          btrfs   subvol=/@home,defaults,noatime,space_cache,autodefrag,compress=zstd,discard=async,ssd 0 0
+UUID=4df36133-e6f6-45a4-81a8-b7501d0b34b3 /var/cache     btrfs   subvol=/@cache,defaults,noatime,space_cache,autodefrag,compress=zstd,discard=async,ssd 0 0
+UUID=4df36133-e6f6-45a4-81a8-b7501d0b34b3 /var/log       btrfs   subvol=/@log,defaults,noatime,space_cache,autodefrag,compress=zstd,discard=async,ssd 0 0
+tmpfs                                     /tmp           tmpfs   defaults,noatime,mode=1777 0 0
+
+UUID=659a6b69-525b-41d7-9324-84881abca7c8 /data ext4 defaults,noatime,nodiratime,discard 0 2
+UUID=d4705dc9-e52c-4dbf-bdc6-35f3b96f6259 /dataw ext4 defaults,noatime,nodiratime,discard 0 2
+/dataw/photoalbum /data/photoalbum/ none defaults,noatime,bind 0 2
+/dataw/photo__projects /data/photo/_projects/ none defaults,noatime,bind 0 2
+/dataw/vboxes /data/vboxes none defaults,noatime,bind 0 2
+/dataw/renpy /data/renpy none defaults,noatime,bind 0 2
+
+UUID=9f2967c8-7e40-4138-961d-bf459b4cadaf /mnt/bng21 ext4 defaults,noatime,noauto 0 0
+UUID=f792bfd0-344a-4b9e-851a-193cc77af5c2 /mnt/bng31 ext4 defaults,noatime,noauto 0 0
+UUID=62c8a497-f236-47f4-ae76-f00b77962288 /mnt/bng32 ext4 defaults,noatime,noauto 0 0
+
+UUID=8baf8813-f486-49ab-af3c-310212cdbd87 /mnt/bng41 ext4 defaults,noatime,noauto 0 0
+UUID=589665de-d1d4-48ec-90a6-8f338d26ad1f /mnt/bng42 ext4 defaults,noatime,noauto 0 0
+
+

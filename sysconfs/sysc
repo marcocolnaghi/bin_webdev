@@ -1,0 +1,60 @@
+#!/bin/bash
+unalias -a 
+
+comm=$(basename $0)
+h=$(hostname -s)
+
+function fpath2fspec() {
+	echo $1|sed -e 's/\//\\/g'
+}
+
+function fspec2fpath() {
+	echo $1|sed -e 's/\\/\//g'
+}
+
+function check() {
+msger="$comm Errors:\n"
+msgok="$comm OK:\n"
+for f in $(ls |grep -v $comm|head -n 1000) 
+do
+	#fo=$(echo $f|sed -e 's/\\/\//g')
+	fo=$(fspec2fpath $f)
+	#cmp -s $f $(echo $f |sed -e 's/\\/\//g')
+	cmp -s $f $fo
+	if [ ! "$?" = "0" ]
+	then
+		msger = "DIFF $fo" 
+		msger="$msger  DIFF $fo\t\tupdate/add with:\t$comm -u $fo\n"
+	else
+		msgok="$msgok  OK   $fo\n"
+	fi
+done
+
+echo -e $msger "\n"
+echo -e $msgok "\n"
+#git status
+}
+
+function vdiff() {
+	fo=$(fspec2fpath $1)
+	fs=$(fpath2fspec $1)
+	vimdiff $fo $fs
+}
+
+function upd() {
+	fo=$(fspec2fpath $1)
+	fs=$(fpath2fspec $1)
+	rm -iv "$fs"
+	cp -prvi $fo "$fs"
+}
+
+[[ "$1" = "-c" ]] && check && exit 0
+[[ "$1" = "-d" ]] && vdiff $2 && exit 0
+[[ "$1" = "-u" ]] && upd $2 && exit 0
+
+
+echo -e "\n$comm syntax:"
+echo -e "  $comm -c                   (check)"
+echo -e "  $comm -d <file>            (visual diff)"
+echo -e "  $comm -u <file>            (update)"
+echo

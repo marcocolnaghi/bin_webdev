@@ -4,13 +4,13 @@ printsyntax () {
 	echo $(basename $0) '<conf>'
 	echo
 	echo with conf:
-	echo -e "\t1i  = 1: internal scale1"
-	echo -e "\t1i+ = 1: internal scale+"
-	echo -e "\t1e  = 1: external"
-	echo -e "\t2l  = 2: internal scale1, external left"
-	echo -e "\t2l+ = 2: internal scale+, external left"
-	echo -e "\t2r  = 2: internal scale1, external right"
-	echo -e "\t2r+ = 2: internal scale+, external rigth"
+	echo -e "\to   = 1: internal scale1"
+	echo -e "\to+  = 1: internal scale+"
+	echo -e "\tO   = 1: external"
+	echo -e "\tOo  = 2: internal scale1, external left"
+	echo -e "\tOo+ = 2: internal scale+, external left"
+	echo -e "\toO  = 2: internal scale1, external right"
+	echo -e "\to+O = 2: internal scale+, external rigth"
 
 	exit 1
 }
@@ -24,25 +24,25 @@ then
 fi
 
 case $1 in
-	1i)
+	o)
 		xrandr --output $extmon --off --output $intmon --auto --scale 1x1
 		;;
-	1i+)
+	o+)
 		xrandr --output $extmon --off --output $intmon --auto --scale 0.8x0.8
 		;;
-	1e)
+	O)
 		[[ ! "$extmon" = "" ]] && xrandr --output $extmon --auto --output $intmon --off --scale 1x1
 		;;
-	2l)
+	Oo)
 		[[ ! "$extmon" = "" ]] && xrandr --output $extmon --auto --left-of $intmon  --output $intmon --auto --scale 1x1
 		;;
-	2l+)
+	Oo+)
 		[[ ! "$extmon" = "" ]] && xrandr --output $extmon --auto --left-of $intmon  --output $intmon --auto --scale 0.7x0.7
 		;;
-	2r)
+	oO)
 		[[ ! "$extmon" = "" ]] && xrandr --output $extmon --auto --right-of $intmon  --output $intmon --auto --scale 1x1 
 		;;
-	2r+)
+	o+O)
 		[[ ! "$extmon" = "" ]] && xrandr --output $extmon --auto --right-of $intmon  --output $intmon --auto --scale 0.7x0.7
 		;;
 	*)

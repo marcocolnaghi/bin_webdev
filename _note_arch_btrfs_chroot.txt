@@ -3,7 +3,8 @@ sudo -i
 cd /mnt
 mkdir arch
 
-mount /dev/sda7 arch
+mount /dev/nvme0n1p7 arch
+
 cd arch
 
 cd @
@@ -23,4 +24,10 @@ chroot .
 mount --bind . /
 
 pacman -Sy
+
+# FOR GRUB partition and installation
+mount /dev/nvme0n1p1 /boot/efi
+grub-install --target=x86_64-efi --bootloader-id=GRUB
+grub-mkconfig -o /boot/grub/grub.cfg
+
 

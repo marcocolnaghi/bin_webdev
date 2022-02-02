@@ -23,12 +23,13 @@ then
 	printsyntax
 fi
 
+plusfac="0.8x0.8"
 case $1 in
 	o)
 		xrandr --output $extmon --off --output $intmon --auto --scale 1x1
 		;;
 	o+)
-		xrandr --output $extmon --off --output $intmon --auto --scale 0.8x0.8
+		xrandr --output $extmon --off --output $intmon --auto --scale $plusfac
 		;;
 	O)
 		[[ ! "$extmon" = "" ]] && xrandr --output $extmon --auto --output $intmon --off --scale 1x1
@@ -37,13 +38,13 @@ case $1 in
 		[[ ! "$extmon" = "" ]] && xrandr --output $extmon --auto --left-of $intmon  --output $intmon --auto --scale 1x1
 		;;
 	Oo+)
-		[[ ! "$extmon" = "" ]] && xrandr --output $extmon --auto --left-of $intmon  --output $intmon --auto --scale 0.7x0.7
+		[[ ! "$extmon" = "" ]] && xrandr --output $extmon --auto --left-of $intmon  --output $intmon --auto --scale $plusfac
 		;;
 	oO)
 		[[ ! "$extmon" = "" ]] && xrandr --output $extmon --auto --right-of $intmon  --output $intmon --auto --scale 1x1 
 		;;
 	o+O)
-		[[ ! "$extmon" = "" ]] && xrandr --output $extmon --auto --right-of $intmon  --output $intmon --auto --scale 0.7x0.7
+		[[ ! "$extmon" = "" ]] && xrandr --output $extmon --auto --right-of $intmon  --output $intmon --auto --scale $plusfac
 		;;
 	*)
 		printsyntax

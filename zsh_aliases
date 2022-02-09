@@ -75,7 +75,9 @@ alias flushcaches='systemd-resolve --flush-caches'
 alias mc="/usr/lib/mc/mc-wrapper.sh"
 alias newpwd='apg -M SNCL -n 8 -x 8'
 alias plr='killall plank; plank >/dev/null 2>&1 & '
+alias usbrestart='sudo /data/bin/usbrestart'
 alias syncgdrive='rclone sync gdrive: /data/gdrive'
+alias vial='vi /data/bin/zsh_aliases'
 
 alias vpnforticd1='sudo -i openfortivpn forticd1.wertherint.com:443 -u silfis1 --trusted-cert 4b696023b2e761cc0404e87e9a51674bddf1408a5c3018e47a2f0763d072671d --set-dns=1'
 alias vpnforticd2='sudo -i openfortivpn fortire2.wertherint.com:443 -u silfis1 --trusted-cert 4b696023b2e761cc0404e87e9a51674bddf1408a5c3018e47a2f0763d072671d --set-dns=1'
@@ -89,4 +91,5 @@ alias lcdoff='xrandr --output eDP --off'
 alias lcdbig='xrandr --output eDP --scale 0.75x0.75'
 alias lcdreset='xrandr --output eDP --scale 1x1'
 
-alias pup='sudo pacman -Syy;sudo pamac update'
+alias pup='sudo pacman -Syy;sudo pacman -Su'
+#alias pup='sudo pacman -Syy;sudo pamac update'

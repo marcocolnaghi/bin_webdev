@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Upgrade
+Operation = Install
+Operation = Remove
+Type = Package
+Target = *
+[Action]
+Description = Clean pacman cache 4 uninstalled
+When = PostTransaction
+Exec = /usr/bin/paccache -ru --min-mtime 15d
+

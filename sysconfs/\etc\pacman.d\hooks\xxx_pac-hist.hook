@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Upgrade
+Operation = Install
+Operation = Remove
+Type = Package
+Target = *
+[Action]
+Description = Update pacman histtory
+When = PostTransaction
+Exec = /data/bin/pac-hist
+

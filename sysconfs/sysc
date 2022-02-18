@@ -23,7 +23,7 @@ do
 	cmp -s $f $fo
 	if [ ! "$?" = "0" ]
 	then
-		msger = "DIFF $fo" 
+		#msger="DIFF $fo" 
 		msger="$msger  DIFF $fo\t\tupdate/add with:\t$comm -u $fo\n"
 	else
 		msgok="$msgok  OK   $fo\n"

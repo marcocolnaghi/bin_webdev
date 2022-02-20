@@ -1,0 +1,35 @@
+#!/bin/bash
+archive="$(echo $0|sed -e 's/diff/archive/')"
+cmd="$(basename $0)"
+echo $archive 
+cd $archive
+#cat $1|grep "^ii"  |cut -b 5-40 >1_$1
+#cat $2|grep "^ii"  |cut -b 5-40 >2_$2
+[[ -z $1 ]] && syntax='1'
+[[ -z $2 ]] && syntax='1'
+[[ ! -z $syntax ]] && \
+	echo -e "$cmd \n Syntax: $cmd <pac-list-1> <pac-list-2>" \
+	&& exit 1
+
+f1="$(basename $1)"
+f2="$(basename $2)"
+[[ ! -f "$f1" ]] && \
+	echo -e "$cmd \n Error: $1 file missing" \
+	&& exit 1
+ 
+[[ ! -f "$f2" ]] && \
+	echo -e "$cmd \n Error: $2 file missing" \
+	&& exit 1
+ 
+t1="/tmp/$1.tmp"
+t2="/tmp/$2.tmp"
+
+cat $f1|cut -d ' ' -f 3 |sort >$t1
+cat $f2|cut -d ' ' -f 3 |sort >$t2
+#cat $f2|cut -d ',' -f 1 |sed -e 's/-updates$//' -e "s/\/$DISTRIB_CODENAME//">$t2
+# vimdiff 1_$1 2_$2
+
+#diff --suppress-common-lines -y $t1 $t2 |vi -
+#vimdiff $t1 $t2 
+diff --suppress-common-lines --side-by-side $t1 $t2 
+

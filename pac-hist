@@ -1,0 +1,21 @@
+#!/bin/bash
+archive="$0-archive"
+mkdir $archive
+
+tempf=/tmp/$(basename $0).tmp
+[[ ! -d $archive ]] && echo "Error: missing dir $archive" && exit 1 
+
+last=$(find $archive -type f -maxdepth 1 |sort|tail -n 1)
+source /etc/lsb-release
+fname="$archive/$(date +%y%m%d-%H%M)_pac_$(cat /etc/hostname)_$DISTRIB_ID.txt"
+
+#pacman -Qs |grep -v '^ '
+#pacman -Qs |grep -v '^ ' >$tempf 2>/dev/null
+expac -Q --timefmt='%F %T'  '%l %n %v' |sort -n >$tempf 2>/dev/null
+
+diff -q $last $tempf
+changed="$?"
+[[ "$changed" = "1" ]] && cp $tempf $fname
+
+
+

@@ -1,0 +1,23 @@
+#!/bin/bash
+unalias -a 
+
+scname=$(basename $0)
+
+cleandir="$1"
+[[ ! -d $cleandir ]] && echo Error: missing "$1" dir && echo Usage "$scname <dir>" && exit 1
+
+rm "$scname"_curfiles.md5
+find . -type f |grep -v "./$cleandir/" |while read f
+do
+    md5sum "$f" >>"$scname"_curfiles.md5
+done
+
+find . -type f |grep "./$cleandir/" |while read f
+do
+    #[[ $(grep $(md5sum "$f") "$scname"_curfiles.md5) ]] && echo Deleting "$f" already $(echo $fdupe|cut -b 35); 
+    f_md5=$(md5sum "$f"|cut -d ' ' -f 1)
+#    fdupe="$(grep $f_md5 "$scname"_curfiles.md5)"
+    [[ $(grep $f_md5 "$scname"_curfiles.md5) ]] && echo Trashing "$f" already in: $(grep $f_md5 "$scname"_curfiles.md5|cut -b 35-) && trash "$f"
+done
+
+rm "$scname"_curfiles.md5

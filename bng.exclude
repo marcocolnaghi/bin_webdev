@@ -1,9 +1,11 @@
 data/renpy
 data/vboxes
+data/vboxes
 data/timeshift*
+dataw/timeshift*
+home/mrc/vboxes
 photochk_new.txt
 */.*cache
 */.*thumbnails/
 */.*Thumbnails/
-/data/temp
-/home/mrc/VirtualBox\ VMs
+data/temp

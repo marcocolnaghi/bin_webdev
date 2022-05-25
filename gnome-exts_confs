@@ -4,6 +4,6 @@ extsd=~/.local/share/gnome-shell/extensions
 
 [ ! -d $extsd ] && echo nodir && exit 1
 newer=$(find $extsd -name $fname -ctime 1|wc -l)
-echo $newer
-[ "$newer" = "0" ] && dconf dump /org/gnome/shell/extensions/ >$extsd/$fname
+#echo $newer
+[ ! "$newer" = "0" ] && dconf dump /org/gnome/shell/extensions/ >$extsd/$fname
 

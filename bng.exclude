@@ -3,6 +3,8 @@ data/vboxes
 data/vboxes
 data/timeshift*
 dataw/timeshift*
+data/test
+dataw/test
 home/mrc/vboxes
 photochk_new.txt
 */.*cache

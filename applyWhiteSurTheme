@@ -1,0 +1,25 @@
+#!/bin/bash
+
+unalias -a
+cd ~
+
+tdir="WhiteSur-gtk-theme"
+
+echo -e "\nInstalling/Updating $tdir\n"
+echo press a key 
+read a 
+
+[[ ! -e $tdir ]] && git clone https://github.com/vinceliuice/$tdir.git 
+[[ ! -d $tdir ]] && echo "Error: $tdir is not a dir!" && exit 1 
+cd $tdir
+git pull
+echo press a key 
+read a 
+
+./install.sh -t orange -t yellow -t green -i arch -l --darker
+echo press a key
+read a 
+
+sudo ./tweaks.sh -g -i arch -o solid -c Dark -t yellow
+
+echo DONE 

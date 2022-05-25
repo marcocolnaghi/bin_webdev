@@ -23,7 +23,7 @@ do
 	for rd in $rawdirs
 	do
 	#echo -e "\t$rd"
-		for rfd in 's/p\.JPG/.CRW/' 's/\.JPG/.CRW/' 's/p\.JPG/.CR2/' 's/\.JPG/.CR2/' 's/p\.jpg/.crw/' 's/\.jpg/.crw/' 's/\p.jpg/.cr2/' 's/\.jpg/.cr2/' 's/p\.JPG/.ufraw/i' 's/\.JPG/.ufraw/i' 's/p\.JPG/r.ufraw/i' 's/\.JPG/r.ufraw/i' 's/p\.JPG/.ppc/i' 's/\.JPG/.ppc/i'
+		for rfd in 's/p\.JPG/.ARW/' 's/\.JPG/.ARW/' 's/p\.JPG/.CRW/' 's/\.JPG/.CRW/' 's/p\.JPG/.CR2/' 's/\.JPG/.CR2/' 's/p\.jpg/.crw/' 's/\.jpg/.crw/' 's/\p.jpg/.cr2/' 's/\.jpg/.cr2/' 's/p\.JPG/.ufraw/i' 's/\.JPG/.ufraw/i' 's/p\.JPG/r.ufraw/i' 's/\.JPG/r.ufraw/i' 's/p\.JPG/.ppc/i' 's/\.JPG/.ppc/i'
 		do
 			#echo -e "\t\t$rfd"
 			#echo -e "\t\t\t$f"

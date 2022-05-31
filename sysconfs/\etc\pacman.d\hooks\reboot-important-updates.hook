@@ -1,0 +1,14 @@
+[Trigger]
+Operation = Upgrade
+Operation = Install
+Operation = Remove
+Type = Package
+Target = linux*
+Target = systemd*
+Target = nvidia*
+
+[Action]
+#Description = #### Important Linux packages have changed. Reboot is recommended. ####
+When = PostTransaction
+Exec = /bin/sh -c "echo -e '\033[1;31m#### Important Linux packages have changed. Reboot is recommended. ####\033[0m'"
+#Exec = /usr/bin/true

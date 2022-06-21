@@ -17,6 +17,9 @@ printsyntax () {
 
 intmon="$(xrandr |grep connected|grep -v disconnected |head -n 1|cut -d ' ' -f 1)"
 extmon="$(xrandr |grep connected|grep -v disconnected |grep -v $intmon|cut -d ' ' -f 1)"
+echo Detected
+echo extmon: $(xrandr |grep $extmon)
+echo intmon: $(xrandr |grep $intmon)
 
 if [ "$1" = "" ]
 then 

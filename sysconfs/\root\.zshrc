@@ -122,6 +122,9 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-source ~/.zsh_aliases
-export kernelVersion=$(uname -r|sed -e 's/-.*//')
+unalias gd
+alias gdi='git diff'
+source "/root/.zsh_aliases"
+
+export kernelVersion=$(uname -r)
 eval "$(starship init zsh)"

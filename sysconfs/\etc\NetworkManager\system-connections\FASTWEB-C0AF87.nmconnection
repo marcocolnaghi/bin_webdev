@@ -3,25 +3,22 @@ id=FASTWEB-C0AF87
 uuid=7a19c4b9-cf26-4dac-bc4d-3f29ec5c2653
 type=wifi
 interface-name=wlp2s0
-permissions=
+timestamp=1647221266
 
 [wifi]
-mac-address-blacklist=
 mode=infrastructure
 ssid=FASTWEB-C0AF87
 
 [wifi-security]
-auth-alg=open
 key-mgmt=wpa-psk
 psk=17C47N6HCT
 
 [ipv4]
-dns-search=
+dns=8.8.8.8;
 method=auto
 
 [ipv6]
 addr-gen-mode=stable-privacy
-dns-search=
-method=auto
+method=disabled
 
 [proxy]

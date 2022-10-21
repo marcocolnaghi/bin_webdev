@@ -1,0 +1,5 @@
+# Run the hourly jobs
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+09 * * * * mrc /data/bin/save_allconfs

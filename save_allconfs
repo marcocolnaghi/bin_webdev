@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for c in $(find $(dirname $0) -maxdepth 1 -name 'save_*' |grep -v $(basename $0))
+do 
+	$c
+done

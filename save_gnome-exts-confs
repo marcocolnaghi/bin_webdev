@@ -1,0 +1,13 @@
+#!/bin/bash 
+odir=/data/bin/sysconfs
+
+fname="$(whoami)"_$(basename $0|sed -e  's/^save_//').dump
+
+[ ! -d $odir ] && echo nodir && exit 1
+
+newer=$(find $odir -name $fname -ctime 1|wc -l)
+#[[ ! -f $odir/$fname ]] && newer="0" 
+
+#echo $newer
+[ "$newer" = "0" ] && dconf dump /org/gnome/shell/extensions/ >$odir/$fname
+

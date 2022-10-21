@@ -1,0 +1,7 @@
+#!/bin/bash
+
+[[ "$1" = "" ]] && echo -e 'Syntax $o <file.pdf>\n\n' && exit 1
+
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/default \
+    -dNOPAUSE -dQUIET -dBATCH -dDetectDuplicateImages \
+    -dCompressFonts=true -r150 -sOutputFile=$(echo $1|sed 's/.pdf$/_small.pdf/') $1

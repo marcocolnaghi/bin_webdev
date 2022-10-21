@@ -1,0 +1,14 @@
+#!/bin/bash 
+odir=/data/bin/sysconfs
+
+fname="$(whoami)"_$(basename $0|sed -e  's/^save_//').dump
+
+[ ! -d $odir ] && echo nodir && exit 1
+
+newer=$(find $odir -name $fname -ctime 1|wc -l)
+#[[ ! -f /$fname ]] && newer="0" 
+
+#echo $newer
+[ "$newer" = "0" ] && \
+	for k in `gsettings list-keys org.gnome.desktop.wm.keybindings`; do echo $k = `gsettings get org.gnome.desktop.wm.keybindings $k`; done >$odir/$fname
+

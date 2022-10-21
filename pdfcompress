@@ -1,0 +1,9 @@
+#!/bin/bash
+unalias -a 
+[[ ! -f $1 ]] && echo Error: $1 file missing && exit 1 
+mv $1 $1.orig
+ef=$(echo $1 |sed -e 's/\.pdf/_e.pdf/')
+pf=$(echo $1 |sed -e 's/\.pdf/_p.pdf/')
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile="$ef" "$1.orig"
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE -dQUIET -dBATCH -sOutputFile="$pf" "$1.orig"
+

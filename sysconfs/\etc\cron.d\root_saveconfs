@@ -1,0 +1,5 @@
+# Run the hourly jobs
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+07 * * * * root /data/bin/save_allconfs;/data/bin/sysconfs/sysc -u -a

@@ -35,6 +35,21 @@ echo -e $msgok "\n"
 #git status
 }
 
+function updall() {
+msger="$comm Errors:\n"
+msgok="$comm OK:\n"
+for f in $(ls |grep -v $comm|grep '\\'|head -n 1000) 
+do
+	fo=$(fspec2fpath $f)
+	fs=$(fpath2fspec $f)
+	cmp -s $f $fo
+	if [ ! "$?" = "0" ]
+	then
+		cp -prv $fo "$fs"
+	fi
+done
+}
+
 function vdiff() {
 	fo=$(fspec2fpath $1)
 	fs=$(fpath2fspec $1)
@@ -50,6 +65,7 @@ function upd() {
 
 [[ "$1" = "-c" ]] && check && exit 0
 [[ "$1" = "-d" ]] && vdiff $2 && exit 0
+[[ "$1" = "-u" ]] && [[ "$2" = "-a" ]] && updall && exit 0
 [[ "$1" = "-u" ]] && upd $2 && exit 0
 
 

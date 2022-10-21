@@ -59,6 +59,10 @@ function cppa() {
 	/usr/bin/cp -puiv $1 $(papath)/$1 
 }
 
+function gd() {
+    mkdir "$@" && cd "$@"
+}
+
 function mcpa() {
 	mc . $(papath) 
 }

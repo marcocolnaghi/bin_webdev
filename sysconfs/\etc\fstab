@@ -17,6 +17,7 @@ UUID=d4705dc9-e52c-4dbf-bdc6-35f3b96f6259 /dataw ext4 defaults,noatime,nodiratim
 /dataw/photo__projects /data/photo/_projects/ none defaults,noatime,bind 0 2
 /dataw/vboxes /data/vboxes none defaults,noatime,bind 0 2
 /dataw/renpy /data/renpy none defaults,noatime,bind 0 2
+/dataw/test /data/test none defaults,noatime,bind 0 2
 
 UUID=9f2967c8-7e40-4138-961d-bf459b4cadaf /mnt/bng21 ext4 defaults,noatime,noauto 0 0
 UUID=f792bfd0-344a-4b9e-851a-193cc77af5c2 /mnt/bng31 ext4 defaults,noatime,noauto 0 0

@@ -121,6 +121,22 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+#
+
+# TERMCAP COLORS
+# 31 red
+# 32 bold green 
+# 33 yellow
+# 37 bold white
+export LESS_TERMCAP_mb=$'\e[1;33m' # blink 
+export LESS_TERMCAP_md=$'\e[1;32m' # bold 
+export LESS_TERMCAP_me=$'\e[0m' # end all 
+export LESS_TERMCAP_se=$'\e[0m' # end standout
+export LESS_TERMCAP_so=$'\e[01;33m' # standout
+export LESS_TERMCAP_ue=$'\e[0m' # end underline
+export LESS_TERMCAP_us=$'\e[1;4;31m' # underline
+
+/data/bin/gnome-exts_confs
 
 unalias gd
 alias gdi='git diff'

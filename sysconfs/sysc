@@ -73,10 +73,7 @@ function upd() {
 echo -e "\n$comm syntax:"
 echo -e "  $comm -c                   (check)"
 echo -e "  $comm -d <file>            (visual diff)"
-<<<<<<< HEAD
-=======
 echo -e "  $comm -h <hostname>        (diff respect /data/bin/bin_<hostname>/sysconfs/)"
->>>>>>> ee77c2c ("upd")
 echo -e "  $comm -u <file>            (update/add)"
 echo -e "  $comm -u -a                (update all)"
 echo

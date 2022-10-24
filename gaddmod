@@ -1,0 +1,7 @@
+#!/bin/bash
+unalias -a 
+
+for f in $(gmod) 
+do
+	git add $f;
+done

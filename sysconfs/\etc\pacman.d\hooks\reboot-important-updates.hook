@@ -9,5 +9,6 @@ Target = nvidia*
 
 [Action]
 Description = #### Important Linux packages have changed. Reboot is recommended. ####
+Description = '\033[1;31m#### Important Linux packages have changed. Reboot is recommended. ####\033[0m'
 When = PostTransaction
 Exec = /usr/bin/true

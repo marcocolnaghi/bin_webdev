@@ -20,6 +20,22 @@ workspaces-right-click=true
 [blur-my-shell]
 brightness=0.67000000000000004
 
+[custom-hot-corners-extended/misc]
+show-osd-monitor-indexes=false
+supported-active-extensions=@as []
+
+[custom-hot-corners-extended/monitor-0-bottom-right-6]
+ctrl=true
+
+[custom-hot-corners-extended/monitor-0-top-left-6]
+ctrl=true
+
+[custom-hot-corners-extended/monitor-0-top-right-0]
+action='toggle-overview'
+
+[custom-hot-corners-extended/monitor-0-top-right-6]
+ctrl=true
+
 [dash-to-panel]
 animate-app-switch=false
 animate-appicon-hover=true

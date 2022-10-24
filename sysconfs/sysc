@@ -65,6 +65,7 @@ function upd() {
 
 [[ "$1" = "-c" ]] && check && exit 0
 [[ "$1" = "-d" ]] && vdiff $2 && exit 0
+[[ "$1" = "-h" ]] && hd="/data/bin/bin_$2/sysconfs" && [[ -d $hd ]] && (diff . $hd |vim -) && exit 0 || (echo "Error: missing /data/bin/bin_$2/sysconfs dir";exit 1)
 [[ "$1" = "-u" ]] && [[ "$2" = "-a" ]] && updall && exit 0
 [[ "$1" = "-u" ]] && upd $2 && exit 0
 
@@ -72,6 +73,10 @@ function upd() {
 echo -e "\n$comm syntax:"
 echo -e "  $comm -c                   (check)"
 echo -e "  $comm -d <file>            (visual diff)"
+<<<<<<< HEAD
+=======
+echo -e "  $comm -h <hostname>        (diff respect /data/bin/bin_<hostname>/sysconfs/)"
+>>>>>>> ee77c2c ("upd")
 echo -e "  $comm -u <file>            (update/add)"
 echo -e "  $comm -u -a                (update all)"
 echo

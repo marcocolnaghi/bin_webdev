@@ -6,6 +6,7 @@ alias la="ls -al $LS_OPTIONS"
 
 alias vi="vim"
 #alias su='sudo -i'
+alias grep='grep -s --color=auto'
 
 # Some more alias to avoid making mistakes:
 alias rm='rm -vi'
@@ -16,9 +17,9 @@ alias poweroff='echo ATTENTION, USE:  /sbin/poweroff'
 alias shutdown='echo ATTENTION, USE:  /sbin/shutdown'
 
 # apt aliases
-alias aptall='apt-get update;apt-get dist-upgrade; apt-get autoremove;apt-get autoclean'
-alias up='sudo apt-get update;sudo apt-get -s dist-upgrade'
-alias upd='sudo apt-get dist-upgrade'
+#alias aptall='apt-get update;apt-get dist-upgrade; apt-get autoremove;apt-get autoclean'
+#alias up='sudo apt-get update;sudo apt-get -s dist-upgrade'
+#alias upd='sudo apt-get dist-upgrade'
 
 # photo aliases
 alias extcount="ls |sed -e 's/^.*\./\./'|sort |uniq -c"
@@ -59,10 +60,6 @@ function cppa() {
 	/usr/bin/cp -puiv $1 $(papath)/$1 
 }
 
-function gd() {
-    mkdir "$@" && cd "$@"
-}
-
 function mcpa() {
 	mc . $(papath) 
 }
@@ -83,6 +80,8 @@ alias usbrestart='sudo /data/bin/usbrestart'
 alias syncgdrive='rclone sync gdrive: /data/gdrive'
 alias vial='vi /data/bin/zsh_aliases'
 
+alias vpnsophos='sudo openvpn --config /data/bin/sophos/com2cor@gateway.sicam.it.ovpn'
+
 alias vpnforticd1='sudo -i openfortivpn forticd1.wertherint.com:443 -u silfis1 --trusted-cert 4b696023b2e761cc0404e87e9a51674bddf1408a5c3018e47a2f0763d072671d --set-dns=1'
 alias vpnforticd2='sudo -i openfortivpn fortire2.wertherint.com:443 -u silfis1 --trusted-cert 4b696023b2e761cc0404e87e9a51674bddf1408a5c3018e47a2f0763d072671d --set-dns=1'
 alias vpnforticd1ip='sudo -i openfortivpn 85.41.111.94:443 -u MColnaghi --trusted-cert 4b696023b2e761cc0404e87e9a51674bddf1408a5c3018e47a2f0763d072671d --set-dns=1'
@@ -97,3 +96,18 @@ alias lcdreset='xrandr --output eDP --scale 1x1'
 
 alias pup='sudo pacman -Syy;sudo pacman -Su'
 #alias pup='sudo pacman -Syy;sudo pamac update'
+
+alias edns='sudo vim /etc/resolv.conf'
+alias pclease='sudo pclease'
+alias mailpwds='sudo ssh root@wendy /data/bin/mailpwds'
+alias nmr='sudo systemctl restart NetworkManager'
+alias gg='gksudo gitg'
+alias nr='cat /etc/resolv.conf;echo "press any key to restart network";read a;sudo systemctl restart NetworkManager'
+alias rdp='rdesktop-vrdp -k it -d WERTHER -g 1600x960 $1 &'
+alias serverut2='rdesktop-vrdp -k it -d WERTHER -u Administrator -g 1600x960 serverut2 &'
+alias w7='rdesktop-vrdp -k it -d WERTHER -u MColnaghi -g 1600x960 win7admin &'
+alias omasn='rdesktop-vrdp -k it -d omalonigo.local -u Administrator -g 1600x960 192.168.1.249 &'
+alias corfs02='rdesktop-vrdp -k it -d muccor -u adm_mcolnaghi -g 1600x960 10.12.7.93 &'
+
+alias mc='source /usr/lib/mc/mc-wrapper.sh'
+alias xpdasus='xrandr --output DisplayPort-0 --primary'

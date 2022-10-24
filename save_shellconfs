@@ -1,0 +1,24 @@
+#!/bin/bash 
+unalias -a
+
+function fpath2fspec() {
+	echo $1|sed -e 's/\//\\/g'
+}
+
+odir=/data/bin/sysconfs
+[ ! -d $odir ] && echo nodir && exit 1
+
+for c in .bashrc .bash_aliases .profile .zshrc .zsh_aliases
+do
+	cname="$HOME/$c"
+	bname=$(fpath2fspec $cname)
+
+	newer=$(find $odir -name $bname -ctime 1|wc -l)
+	[[ ! -f /$bname ]] && newer="0" 
+
+	#echo $newer
+	if [ "$newer" = "0" ] 
+	then
+		cp -puv "$cname" "$odir/$bname"
+	fi
+done

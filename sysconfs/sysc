@@ -15,7 +15,7 @@ function fspec2fpath() {
 function check() {
 msger="$comm Errors:\n"
 msgok="$comm OK:\n"
-for f in $(ls |grep -v $comm|head -n 1000) 
+for f in $(ls |grep -v $comm|sort|head -n 1000) 
 do
 	#fo=$(echo $f|sed -e 's/\\/\//g')
 	fo=$(fspec2fpath $f)
@@ -45,7 +45,7 @@ do
 	cmp -s $f $fo
 	if [ ! "$?" = "0" ]
 	then
-		cp -prv $fo "$fs"
+		cp -pv $fo "$fs"
 	fi
 done
 }
@@ -59,8 +59,8 @@ function vdiff() {
 function upd() {
 	fo=$(fspec2fpath $1)
 	fs=$(fpath2fspec $1)
-	rm -iv "$fs"
-	cp -prvi $fo "$fs"
+	rm -v "$fs"
+	cp -puv $fo "$fs"
 }
 
 [[ "$1" = "-c" ]] && check && exit 0
@@ -72,5 +72,6 @@ function upd() {
 echo -e "\n$comm syntax:"
 echo -e "  $comm -c                   (check)"
 echo -e "  $comm -d <file>            (visual diff)"
-echo -e "  $comm -u <file>            (update)"
+echo -e "  $comm -u <file>            (update/add)"
+echo -e "  $comm -u -a                (update all)"
 echo

@@ -1,0 +1,10 @@
+#!/bin/bash
+unalias -a 
+
+defcom="upd"
+[[ ! -z $1 ]] && defcom="$1"
+
+for f in $(git status --porcelain|grep -e "^[MA] "|cut -b 4-|tr -d '\"'|sed -e "s/$(basename $(pwd))\///")
+do
+	git commit $f -m \"$defcom\" 	
+done

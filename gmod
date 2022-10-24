@@ -1,0 +1,5 @@
+#!/bin/bash
+unalias -a 
+
+#git status --porcelain|grep -e "^MM"|cut -b 4-|tr -d '\"'|sed -e "s/$(basename $(pwd))\///"
+git status --porcelain|grep -e "^.M"|cut -b 4-|tr -d '\"'|sed -e "s/$(basename $(pwd))\///"
